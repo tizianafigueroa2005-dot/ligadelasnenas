@@ -1,123 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Liga de las Nenas - Oficial</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* MANTENIENDO TU ESTILO ORIGINAL */
-        body { font-family: 'Roboto', sans-serif; background: linear-gradient(to bottom, #ff7bc1, #ffb3d9, #ffffff); min-height: 100vh; margin: 0; scroll-behavior: smooth; }
-        .oswald { font-family: 'Oswald', sans-serif; }
-        .header-text { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .tab-btn { background-color: rgba(255, 255, 255, 0.3); color: #4a3b4d; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
-        .tab-btn.active { background: linear-gradient(to bottom, #e6338a, #c2185b); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-color: transparent; }
-        .view-section, .sub-view { display: none; }
-        .view-section.active, .sub-view.active { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        #modal-container, #dni-modal-container, #confirm-modal, #match-detail-modal, #create-match-modal, #auth-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
-        .id-card { width: 330px; height: 210px; background: white; border-radius: 18px; position: relative; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.8); margin: auto; }
-        .id-card-header { background: linear-gradient(to right, #e6338a, #c2185b); height: 55px; padding: 10px 15px; color: white; display: flex; align-items: center; gap: 10px; }
-        .id-card-body { display: flex; padding: 15px; gap: 15px; position: relative; }
-        .id-photo { width: 90px; height: 110px; background: #f1f5f9; border: 3px solid #ff7bc1; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 10; }
-        .id-photo img { width: 100%; height: 100%; object-fit: cover; }
-        .id-details { flex: 1; z-index: 10; }
-        .id-label { font-size: 8px; color: #94a3b8; text-transform: uppercase; font-weight: 900; margin-bottom: -1px; }
-        .id-value { font-size: 13px; color: #1e293b; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
-        .id-footer { position: absolute; bottom: 0; width: 100%; height: 28px; background: #2d1b2e; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #ffb3d9; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; }
-        .watermark { position: absolute; right: 10px; bottom: 40px; width: 80px; height: 80px; opacity: 0.1; pointer-events: none; }
-        .zona-badge { padding: 2px 8px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; }
-        .zona-a { background: #e0f2fe; color: #0369a1; }
-        .zona-b { background: #fef3c7; color: #92400e; }
-        body:not(.admin-mode) .admin-only { display: none !important; }
-        #sync-indicator { position: fixed; bottom: 1rem; left: 1rem; font-size: 10px; font-weight: bold; text-transform: uppercase; color: #4a3b4d; background: rgba(255, 255, 255, 0.8); padding: 4px 10px; border-radius: 999px; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px); z-index: 1000; }
-    </style>
-</head>
-<body class="pb-20">
-    <div id="sync-indicator">
-        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        Cloud Sync Active (RTDB)
-    </div>
-
-    <div id="auth-modal" onclick="closeAuthModal()">
-        <div class="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl text-center" onclick="event.stopPropagation()">
-            <h3 class="oswald text-xl font-bold uppercase text-gray-800 mb-4">Acceso Administrador</h3>
-            <input type="password" id="admin-pwd" placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 font-bold text-center outline-none mb-4">
-            <button onclick="loginAdmin()" class="w-full py-3 bg-pink-600 text-white font-black rounded-xl uppercase text-[10px]">Ingresar</button>
-        </div>
-    </div>
-
-    <div id="modal-container" onclick="cerrarCarnet()">
-        <div class="p-2 relative" onclick="event.stopPropagation()">
-            <button onclick="cerrarCarnet()" class="absolute -top-12 right-0 text-white font-bold text-4xl">×</button>
-            <div id="id-card-render"></div>
-            <button onclick="cerrarCarnet()" class="w-full mt-6 py-4 bg-white text-pink-600 font-black rounded-2xl uppercase text-sm shadow-2xl">Cerrar</button>
-        </div>
-    </div>
-
-    <header id="inicio" class="pt-10 pb-6 px-6 text-center relative text-white">
-        <div class="absolute top-6 right-6 flex gap-2 z-50">
-            <button onclick="toggleAuthModal()" class="text-white/80 hover:text-white p-2 rounded-full bg-black/10">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path id="auth-icon-path" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            </button>
-        </div>
-        <div class="flex justify-between items-center max-w-md mx-auto">
-            <div class="w-16 h-16 bg-white rounded-full p-1 shadow-lg flex items-center justify-center overflow-hidden"><img id="header-logo-l" src="" class="logo-liga-dinamico"></div>
-            <h1 class="oswald text-4xl font-black uppercase header-text text-center mx-2 tracking-tighter">LA LIGA DE LAS<br>NENAS</h1>
-            <div class="w-16 h-16 bg-white rounded-full p-1 shadow-lg flex items-center justify-center overflow-hidden"><img id="header-logo-r" src="" class="logo-liga-dinamico"></div>
-        </div>
-    </header>
-
-    <main class="max-w-md mx-auto px-4 mt-4 text-center">
-        <div class="flex gap-2 mb-8 leading-none w-full">
-            <button onclick="switchView('posiciones', this)" class="tab-btn active rounded-2xl py-4 flex-1 text-[9px] font-bold uppercase">Tablas</button>
-            <button onclick="switchView('equipos', this)" class="tab-btn rounded-2xl py-4 flex-1 text-[9px] font-bold uppercase">Equipos</button>
-            <button onclick="switchView('fichar', this)" class="tab-btn rounded-2xl py-4 flex-1 text-[9px] font-bold uppercase admin-only">Fichar</button>
-        </div>
-
-        <section id="vista-posiciones" class="view-section active">
-            <div id="tablas-dinamicas" class="space-y-12 text-left"></div>
-        </section>
-
-        <section id="vista-equipos" class="view-section">
-            <div id="subvista-equipos-lista" class="sub-view active">
-                <div class="bg-white/40 p-6 rounded-3xl mb-10 admin-only">
-                    <input type="text" id="nombreEquipo" placeholder="NOMBRE DEL CLUB" class="w-full px-4 py-4 rounded-xl font-black text-center uppercase mb-4 shadow-inner">
-                    <select id="zonaEquipo" class="w-full px-4 py-3 rounded-xl bg-white font-bold text-gray-700 outline-none uppercase text-xs">
-                        <option value="A">ZONA A</option>
-                        <option value="B">ZONA B</option>
-                    </select>
-                    <button onclick="agregarEquipo()" class="w-full py-4 mt-4 bg-pink-600 text-white font-black uppercase rounded-xl">Agregar Equipo</button>
-                </div>
-                <div id="lista-clubes-botones" class="grid grid-cols-1 gap-4 text-left"></div>
-            </div>
-        </section>
-
-        <section id="vista-fichar" class="view-section">
-            <div class="bg-white/40 p-6 rounded-3xl text-center">
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <input type="text" id="apellidoJugadora" placeholder="APELLIDO" class="w-full px-4 py-3 rounded-xl font-bold uppercase">
-                    <input type="text" id="nombreJugadora" placeholder="NOMBRE" class="w-full px-4 py-3 rounded-xl font-bold uppercase">
-                </div>
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <input type="number" id="dniJugadora" placeholder="DNI" class="w-full px-4 py-3 rounded-xl font-bold">
-                    <input type="date" id="fechaNacimientoJugadora" class="w-full px-2 py-3 rounded-xl font-bold text-xs">
-                </div>
-                <select id="clubJugadora" class="w-full px-3 py-3 rounded-xl font-bold text-xs mb-4"></select>
-                <button onclick="ficharPersona()" class="w-full py-4 bg-pink-600 text-white font-black uppercase rounded-2xl">Fichar Persona</button>
-            </div>
-            <div id="lista-fichajes" class="mt-8"></div>
-        </section>
-    </main>
-
-    <div id="status-message" class="fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] hidden text-white"></div>
+<!DOCTYPE html><html lang="es"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>La Liga de las Nenas - Oficial</title>    <script src="https://cdn.tailwindcss.com"></script>    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">    <style>        body {            font-family: 'Roboto', sans-serif;            background: linear-gradient(to bottom, #ff7bc1, #ffb3d9, #ffffff);            min-height: 100vh;            margin: 0;            scroll-behavior: smooth;        }        .oswald { font-family: 'Oswald', sans-serif; }        .header-text { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }                .tab-btn {            background-color: rgba(255, 255, 255, 0.3);            color: #4a3b4d;            border: 1px solid rgba(255, 255, 255, 0.2);            transition: all 0.3s ease;        }        .tab-btn.active {            background: linear-gradient(to bottom, #e6338a, #c2185b);            color: white;            box-shadow: 0 4px 10px rgba(0,0,0,0.2);            border-color: transparent;        }                .category-tab {            border-bottom: 3px solid transparent;            color: #94a3b8;            font-weight: 900;            text-transform: uppercase;            font-size: 12px;            padding: 10px 0;            transition: all 0.3s;        }        .category-tab.active {            border-bottom: 3px solid #e6338a;            color: #e6338a;        }
+        .view-section, .sub-view { display: none; }        .view-section.active, .sub-view.active {            display: block;            animation: slideIn 0.3s ease-out;        }        @keyframes slideIn {            from { opacity: 0; transform: translateX(20px); }            to { opacity: 1; transform: translateX(0); }        }
+        #modal-container, #dni-modal-container, #confirm-modal, #match-detail-modal, #create-match-modal {            display: none;            position: fixed;            inset: 0;            background: rgba(0,0,0,0.9);            z-index: 200;            align-items: center;            justify-content: center;            backdrop-filter: blur(10px);            padding: 20px;        }
+        .id-card {            width: 330px;            height: 210px;            background: white;            border-radius: 18px;            position: relative;            overflow: hidden;            box-shadow: 0 15px 30px rgba(0,0,0,0.3);            border: 2px solid rgba(255,255,255,0.8);            margin: auto;        }        .id-card-header {            background: linear-gradient(to right, #e6338a, #c2185b);            height: 55px;            padding: 10px 15px;            color: white;            display: flex;            align-items: center; gap: 10px;        }        .id-card-body { display: flex; padding: 15px; gap: 15px; position: relative; }        .id-photo {            width: 90px; height: 110px;            background: #f1f5f9; border: 3px solid #ff7bc1; border-radius: 10px;            display: flex; align-items: center; justify-content: center;            overflow: hidden; z-index: 10;        }        .id-photo img { width: 100%; height: 100%; object-fit: cover; }        .id-details { flex: 1; z-index: 10; }        .id-label { font-size: 8px; color: #94a3b8; text-transform: uppercase; font-weight: 900; margin-bottom: -1px; }        .id-value { font-size: 13px; color: #1e293b; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }        .id-footer {            position: absolute; bottom: 0; width: 100%; height: 28px;            background: #2d1b2e; display: flex; align-items: center; justify-content: center;            font-size: 10px; color: #ffb3d9; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;        }        .watermark { position: absolute; right: 10px; bottom: 40px; width: 80px; height: 80px; opacity: 0.1; pointer-events: none; }
+        .loader {            border: 3px solid #f3f3f3; border-top: 3px solid #e6338a; border-radius: 50%;            width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block;        }        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #btnVolverArriba {            display: none; position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 90;            background: linear-gradient(to bottom, #ff4db8, #d63384); color: white;            padding: 0.75rem; border-radius: 9999px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);            border: 2px solid white; transition: all 0.3s ease;        }                .category-btn-active { background-color: #ff4db8; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }        .category-btn-inactive { background-color: rgba(255, 255, 255, 0.3); color: #4a3b4d; }                .no-scrollbar::-webkit-scrollbar { display: none; }        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .date-tab {            white-space: nowrap; padding: 8px 16px; border-radius: 12px;            font-weight: 700; color: #4a3b4d; background: white;            border: 2px solid transparent; transition: all 0.2s ease; cursor: pointer;        }        .date-tab.active { background: white; border-color: #ff4db8; color: #ff4db8; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }        .new-date-btn { background: #e2e8f0; color: #64748b; }
+        .table-card { background: white; border-radius: 2rem; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }        .table-header-cell { padding: 12px 6px; font-size: 9px; text-transform: uppercase; font-weight: 900; color: #94a3b8; letter-spacing: 0.05em; }        .table-row { border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }        .table-row:last-child { border-bottom: none; }        .table-row:nth-child(even) { background-color: #fafafa; }        .table-cell { padding: 14px 6px; font-size: 11px; font-weight: 700; color: #334155; }        .pts-cell { background-color: #fff1f8; color: #e6338a; font-weight: 900; font-size: 13px; }
+        .fichaje-type-btn {            flex: 1; padding: 10px; font-size: 10px; font-weight: 900; text-transform: uppercase;            border-radius: 12px; transition: all 0.3s;        }        .fichaje-type-btn.active { background: #4a3b4d; color: white; }        .fichaje-type-btn.inactive { background: #f1f5f9; color: #94a3b8; }    </style></head><body class="pb-20">
+    <div id="confirm-modal">        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center" onclick="event.stopPropagation()">            <h3 id="confirm-title" class="oswald text-2xl font-bold uppercase text-gray-800 mb-2">¿Estás seguro?</h3>            <p id="confirm-message" class="text-gray-600 text-sm mb-6 leading-tight">Esta acción no se puede deshacer.</p>            <div class="flex gap-3">                <button onclick="closeConfirmModal()" class="flex-1 py-3 bg-gray-100 text-gray-500 font-black rounded-xl uppercase text-[10px] transition-all">Cancelar</button>                <button id="confirm-execute-btn" class="flex-1 py-3 bg-red-500 text-white font-black rounded-xl uppercase text-[10px] shadow-lg">Eliminar</button>            </div>        </div>    </div>
+    <div id="create-match-modal">        <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl relative" onclick="event.stopPropagation()">            <h3 class="oswald text-2xl font-black text-gray-800 uppercase mb-6 text-center tracking-tight">Programar Partido</h3>            <div class="space-y-4">                <div>                    <label class="block text-[10px] font-black uppercase text-pink-500 mb-1 ml-1">Equipo Local</label>                    <select id="equipoL" class="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 font-bold text-gray-700 text-sm outline-none focus:ring-2 focus:ring-pink-300 transition-all"></select>                </div>                <div>                    <label class="block text-[10px] font-black uppercase text-pink-500 mb-1 ml-1">Equipo Visitante</label>                    <select id="equipoV" class="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 font-bold text-gray-700 text-sm outline-none focus:ring-2 focus:ring-pink-300 transition-all"></select>                </div>                <div class="flex gap-2 pt-4">                    <button onclick="cerrarNuevoPartido()" class="flex-1 py-4 bg-gray-100 text-gray-400 font-black rounded-2xl uppercase text-[10px] tracking-widest transition-all">Cerrar</button>                    <button onclick="agregarCruceAlFixture()" class="flex-1 py-4 bg-pink-600 text-white font-black rounded-2xl uppercase text-[10px] tracking-widest shadow-lg">Confirmar</button>                </div>            </div>        </div>    </div>
+    <div id="match-detail-modal">        <div class="bg-white rounded-[2.5rem] p-6 max-w-md w-full shadow-2xl relative max-h-[90vh] overflow-y-auto no-scrollbar" onclick="event.stopPropagation()">            <button onclick="cerrarDetallePartido()" class="absolute top-6 right-6 text-gray-300 hover:text-gray-600 transition-colors">                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>            </button>            <div class="text-center mb-8">                <span id="modal-match-fecha" class="text-[10px] font-black text-pink-500 uppercase tracking-widest bg-pink-50 px-3 py-1 rounded-full">Fecha 1</span>                <div class="flex items-center justify-between mt-6 gap-2">                    <div class="flex flex-col items-center flex-1">                        <div id="modal-match-logo-l" class="w-16 h-16 bg-white rounded-full p-1 shadow-md border border-gray-100 mb-2"></div>                        <span id="modal-match-nombre-l" class="oswald text-sm font-black uppercase text-gray-800 text-center leading-tight line-clamp-2">Local</span>                    </div>                    <span class="oswald text-2xl font-black text-gray-200 uppercase">VS</span>                    <div class="flex flex-col items-center flex-1">                        <div id="modal-match-logo-v" class="w-16 h-16 bg-white rounded-full p-1 shadow-md border border-gray-100 mb-2"></div>                        <span id="modal-match-nombre-v" class="oswald text-sm font-black uppercase text-gray-800 text-center leading-tight line-clamp-2">Visitante</span>                    </div>                </div>            </div>            <div id="contenedor-inputs-categorias" class="space-y-4"></div>            <button onclick="guardarResultadosPartidoActual()" class="w-full mt-8 py-4 bg-gradient-to-r from-pink-600 to-pink-800 text-white font-black uppercase rounded-2xl shadow-xl active:scale-95 text-xs tracking-widest">Guardar Resultados</button>        </div>    </div>
+    <div id="modal-container" onclick="cerrarCarnet()">        <div class="p-2 relative" onclick="event.stopPropagation()">            <button onclick="cerrarCarnet()" class="absolute -top-12 right-0 text-white font-bold text-4xl bg-black/40 w-12 h-12 rounded-full flex items-center justify-center">×</button>            <div id="id-card-render"></div>            <button onclick="cerrarCarnet()" class="w-full mt-6 py-4 bg-white text-pink-600 font-black rounded-2xl uppercase text-sm shadow-2xl active:scale-95 transition-all">Cerrar Credencial</button>        </div>    </div>
+    <div id="dni-modal-container" onclick="cerrarDniModal()">        <div class="p-4 bg-white rounded-3xl max-w-[90vw] w-full" onclick="event.stopPropagation()">            <div class="flex justify-between items-center mb-4 text-left">                <h3 class="oswald text-xl font-bold uppercase text-gray-800 tracking-tight leading-none">Visor de Documento</h3>                <button onclick="cerrarDniModal()" class="text-gray-400 font-black text-2xl leading-none">×</button>            </div>            <div id="dni-image-render" class="w-full h-auto min-h-[200px] bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center border-2 border-dashed border-gray-200 shadow-inner"></div>            <button onclick="cerrarDniModal()" class="w-full mt-6 py-4 bg-[#4a3b4d] text-white font-black rounded-2xl uppercase text-sm shadow-lg active:scale-95 transition-all">Cerrar Visor</button>        </div>    </div>
+    <div id="status-message" class="fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] hidden text-white transition-all"></div>
+    <header id="inicio" class="pt-10 pb-6 px-6 text-center relative text-white">        <div class="flex justify-between items-center max-w-md mx-auto leading-none">            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">            <h1 class="oswald text-4xl font-black uppercase leading-none header-text tracking-tighter text-center">LA LIGA DE LAS<br>NENAS</h1>            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">        </div>        <div class="h-1.5 bg-black opacity-10 mt-4 mx-auto w-40 rounded-full shadow-inner"></div>    </header>
+    <main class="max-w-md mx-auto px-4 mt-4 text-center">        <div class="grid grid-cols-4 gap-2 mb-8 leading-none">            <button onclick="switchView('posiciones', this)" class="tab-btn active rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>                <span class="text-[9px] font-bold uppercase leading-tight">Tablas</span>            </button>            <button onclick="switchView('fechas', this)" class="tab-btn rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 2 2 5-5-2-2"/><path d="M8.5 22.5 12 19l-7-7-3.5 3.5Z"/><path d="m18 13 3 3"/></svg>                <span class="text-[9px] font-bold uppercase leading-tight">Fixture y Resultados</span>            </button>            <button onclick="switchView('equipos', this)" class="tab-btn rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm text-center">                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>                <span class="text-[9px] font-bold uppercase leading-tight">Equipos</span>            </button>            <button onclick="switchView('fichar', this)" class="tab-btn rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/></svg>                <span class="text-[9px] font-bold uppercase leading-tight">Fichar</span>            </button>        </div>
+        <section id="vista-posiciones" class="view-section active">            <div class="flex gap-2 mb-8 overflow-x-auto pb-4 no-scrollbar sticky top-2 z-20">                <button onclick="irACategoria('cat-general', this)" class="cat-btn category-btn-active px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">General</button>                <button onclick="irACategoria('cat-201112', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2011/12</button>                <button onclick="irACategoria('cat-201314', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2013/14</button>                <button onclick="irACategoria('cat-201516', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2015/16</button>                <button onclick="irACategoria('cat-201718', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2017/18</button>                <button onclick="irACategoria('cat-201920', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2019/20</button>            </div>            <div id="tablas-dinamicas" class="space-y-12 text-left"></div>        </section>
+        <section id="vista-fechas" class="view-section leading-none">            <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e] tracking-tight">Fixture y Resultados</h2>            <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar mb-6" id="contenedor-pestañas-fechas"></div>            <div class="flex items-center justify-between mb-8 px-1">                <button onclick="abrirEstadisticasFecha()" class="bg-yellow-300 text-[9px] font-black text-yellow-900 px-4 py-2.5 rounded-full shadow-sm uppercase tracking-tight">Estadísticas de la fecha</button>                <div class="flex gap-2">                    <button onclick="abrirNuevoPartido()" class="bg-red-600 text-white flex items-center gap-1.5 px-4 py-2.5 rounded-full shadow-md text-[9px] font-black uppercase"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Partido</button>                    <button onclick="eliminarJornadaActual()" class="text-gray-400 p-2 hover:text-red-500 transition-colors"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>                </div>            </div>            <div id="contenedor-jornadas-historial" class="space-y-4 text-left min-h-[200px]"></div>        </section>
+        <section id="vista-equipos" class="view-section leading-none">            <div id="subvista-equipos-lista" class="sub-view active">                <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e]">Clubes Registrados</h2>                <div class="bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center">                    <div class="flex flex-col items-center mb-6">                        <div class="relative group">                            <div id="club-logo-preview-container" class="w-24 h-24 bg-white/80 rounded-full border-2 border-dashed border-pink-400 flex items-center justify-center overflow-hidden p-1 shadow-inner"><svg id="club-placeholder-logo" width="30" height="30" fill="#ff7bc1" viewBox="0 0 512 512"><path d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0z"/></svg><img id="club-logo-preview" class="hidden w-full h-full object-contain"></div>                            <input type="file" id="input-logo-club" accept="image/*" class="hidden" onchange="previewLogoClub(event)">                            <button onclick="document.getElementById('input-logo-club').click()" class="absolute -bottom-1 -right-1 bg-pink-600 text-white p-2 rounded-full shadow-lg border-2 border-white"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg></button>                        </div>                        <span class="text-[9px] font-black text-pink-700 mt-2 uppercase tracking-widest">Subir Escudo</span>                    </div>                    <input type="text" id="nombreEquipo" placeholder="NOMBRE DEL CLUB" class="w-full px-4 py-4 rounded-xl bg-white border-none font-black text-center text-gray-700 uppercase tracking-widest shadow-inner outline-none mb-4">                    <button onclick="agregarEquipo()" class="w-full py-4 bg-gradient-to-r from-[#e6338a] to-[#c2185b] text-white font-black uppercase rounded-xl shadow-md">Agregar Equipo</button>                </div>                <div id="lista-clubes-botones" class="grid grid-cols-1 gap-4 text-left"></div>            </div>
+            <div id="subvista-club-detalle" class="sub-view text-left">                <button onclick="mostrarSubvista('subvista-equipos-lista')" class="flex items-center gap-1 text-pink-700 font-black mb-6 uppercase text-[11px] bg-white/50 px-4 py-2 rounded-full shadow-sm">Volver a Clubes</button>                <div class="bg-[#4a3b4d] rounded-3xl p-6 text-white mb-8 flex justify-between items-center shadow-xl border-b-4 border-pink-500">                    <div class="flex items-center gap-3"><div id="detalle-club-escudo" class="w-14 h-14 bg-white rounded-full p-1 overflow-hidden shadow-sm"></div><h2 id="detalle-club-nombre" class="oswald text-3xl font-black uppercase tracking-widest leading-none">---</h2></div>                    <button onclick="borrarClubAction(clubActualId)" class="bg-red-500 text-white p-3 rounded-xl shadow-lg active:scale-90 transition-all"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>                </div>                <div id="lista-categorias-botones" class="grid grid-cols-1 gap-3"></div>            </div>
+            <div id="subvista-plantel-detalle" class="sub-view text-left">                <button onclick="mostrarSubvista('subvista-club-detalle')" class="flex items-center gap-1 text-pink-700 font-black mb-6 uppercase text-[11px] bg-white/50 px-4 py-2 rounded-full shadow-sm">Volver a Categorías</button>                <div class="bg-white rounded-3xl p-5 border-b-8 border-pink-500 mb-8 shadow-xl text-center">                    <h2 id="plantel-club-nombre" class="oswald text-xl text-gray-400 uppercase font-bold">---</h2>                    <h3 id="plantel-categoria-nombre" class="oswald text-4xl font-black text-pink-600 uppercase mt-1">---</h3>                </div>                <div class="flex border-b border-gray-200 mb-6 px-2">                    <button onclick="cambiarSeccionPlantel('jugadoras')" id="tab-plantel-jugadoras" class="category-tab active flex-1 text-center">Plantel</button>                    <button onclick="cambiarSeccionPlantel('partidos')" id="tab-plantel-partidos" class="category-tab flex-1 text-center">Partidos</button>                </div>                <div id="contenedor-jugadoras-fichadas" class="space-y-3"></div>                <div id="contenedor-partidos-equipo" class="space-y-4 hidden"></div>            </div>        </section>
+        <section id="vista-fichar" class="view-section leading-none">            <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e] tracking-tight">Fichaje Oficial</h2>                        <div class="bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center">                                <div class="flex bg-gray-100 p-1 rounded-2xl mb-8 gap-1">                    <button onclick="setTipoFichaje('jugadora')" id="btn-type-jugadora" class="fichaje-type-btn active">Jugadora</button>                    <button onclick="setTipoFichaje('delegado')" id="btn-type-delegado" class="fichaje-type-btn inactive">Delegado</button>                </div>
+                <div id="fichaje-photos-section" class="flex justify-center gap-8 mb-8 leading-none">                    <div class="flex flex-col items-center">                        <div class="relative">                            <div id="photo-preview-container" class="w-24 h-32 bg-white/80 rounded-xl border-2 border-dashed border-pink-400 flex items-center justify-center overflow-hidden shadow-inner"><svg id="placeholder-icon" width="30" height="30" fill="#ff7bc1" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><img id="image-preview" class="hidden w-full h-full object-cover"></div>                            <input type="file" id="input-foto" accept="image/*" class="hidden" onchange="previewFoto(event, 'perfil')">                            <button onclick="document.getElementById('input-foto').click()" class="absolute -bottom-2 -right-2 bg-pink-600 text-white p-2 rounded-full border-2 border-white shadow-lg active:scale-90 transition-all leading-none"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg></button>                        </div>                        <span class="text-[8px] font-black text-pink-700 mt-2 uppercase tracking-widest">Foto Rostro</span>                    </div>                    <div id="fichaje-dni-photo-container" class="flex flex-col items-center">                        <div class="relative">                            <div id="dni-preview-container" class="w-24 h-32 bg-white/80 rounded-xl border-2 border-dashed border-pink-400 flex items-center justify-center overflow-hidden shadow-inner"><svg id="placeholder-dni-icon" width="30" height="30" fill="#ff7bc1" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="3" x2="21" y1="10" y2="10"/></svg><img id="dni-image-preview" class="hidden w-full h-full object-cover"></div>                            <input type="file" id="input-foto-dni" accept="image/*" class="hidden" onchange="previewFoto(event, 'dni')">                            <button onclick="document.getElementById('input-foto-dni').click()" class="absolute -bottom-2 -right-2 bg-[#4a3b4d] text-white p-2 rounded-full border-2 border-white shadow-lg active:scale-90 transition-all leading-none"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg></button>                        </div>                        <span class="text-[8px] font-black text-pink-700 mt-2 uppercase tracking-widest">Foto DNI</span>                    </div>                </div>
+                <button id="btn-verificar-ia" onclick="ejecutarVerificacionDefinitiva()" class="w-full mb-6 py-3 bg-indigo-600 text-white font-black uppercase rounded-xl text-[10px] shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all">                    <span id="ia-btn-text">Verificar Identidad con IA</span>                </button>                <div id="ia-result-box" class="hidden p-3 rounded-xl mb-4 text-[10px] font-bold border"></div>
+                <div class="space-y-4 text-left leading-none">                    <div class="grid grid-cols-2 gap-3 leading-none">                        <input type="text" id="apellidoJugadora" placeholder="APELLIDO" class="w-full px-4 py-3 rounded-xl bg-white border-none font-bold text-gray-700 shadow-sm outline-none uppercase tracking-widest">                        <input type="text" id="nombreJugadora" placeholder="NOMBRE" class="w-full px-4 py-3 rounded-xl bg-white border-none font-bold text-gray-700 shadow-sm outline-none uppercase tracking-widest">                    </div>                    <div class="grid grid-cols-2 gap-3 leading-none">                        <input type="number" id="dniJugadora" placeholder="DNI" class="w-full px-4 py-3 rounded-xl bg-white border-none font-bold text-gray-700 shadow-sm outline-none">                        <input type="date" id="fechaNacimientoJugadora" class="w-full px-2 py-3 rounded-xl bg-white border-none font-bold text-gray-700 text-xs shadow-sm outline-none">                    </div>                    <div>                        <label class="block text-[10px] font-black text-pink-700 uppercase mb-1 ml-1 tracking-widest">Elegir Club</label>                        <select id="clubJugadora" class="w-full px-3 py-3 rounded-xl bg-white border-none font-bold text-gray-700 text-xs shadow-sm focus:ring-2 focus:ring-pink-400 outline-none leading-none"></select>                    </div>                    <button onclick="ficharPersona()" id="btn-confirmar-fichaje" class="w-full py-4 mt-4 bg-pink-600 text-white font-black uppercase rounded-2xl shadow-xl active:scale-95 text-xs tracking-widest leading-none">Fichar Persona</button>                </div>            </div>            <div id="lista-fichajes" class="space-y-6 text-left leading-none"></div>        </section>    </main>
+    <button id="btnVolverArriba" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Ir al inicio"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // CONFIGURACIÓN PROPORCIONADA
         const firebaseConfig = {
             apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",
             authDomain: "ldln2026.firebaseapp.com",
@@ -125,188 +37,177 @@
             projectId: "ldln2026",
             storageBucket: "ldln2026.firebasestorage.app",
             messagingSenderId: "1071996748084",
-            appId: "1:1071996748084:web:65912e20c1af6e9df72561"
+            appId: "1:1071996748084:web:65912e20c1af6e9df72561",
+            measurementId: "G-P4SMXPJ9CB"
         };
 
+        const IMGBB_API_KEY = "6af63ceaccd1ceb15108b6545f9202fe";
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // VARIABLES GLOBALES
-        window.isAdmin = false;
-        window.tipoFichajeActual = "jugadora";
-        const logoLigaGlobal = "https://cdn-icons-png.flaticon.com/512/3306/3306567.png";
-        const categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
+        // Variables Globales
+        window.equipos = []; window.partidos = []; window.jugadoras = [];
+        window.identidadesVerificadas = {}; window.jornadaActualNum = 1;
+        window.totalJornadas = 1; window.categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
 
-        // --- SINCRONIZACIÓN EN TIEMPO REAL ---
-        onValue(ref(db, 'liga'), (snapshot) => {
-            const data = snapshot.val() || {};
-            window.equipos = data.equipos ? Object.entries(data.equipos).map(([key, val]) => ({...val, key})) : [];
-            window.jugadoras = data.jugadoras ? Object.entries(data.jugadoras).map(([key, val]) => ({...val, key})) : [];
-            window.partidos = data.partidos ? Object.entries(data.partidos).map(([key, val]) => ({...val, key})) : [];
-            
-            window.actualizarTodo();
+        // Subida de imágenes a ImgBB
+        async function subirAInternet(base64) {
+            if (!base64) return null;
+            const body = new FormData();
+            body.append("image", base64.split(",")[1]);
+            try {
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: body });
+                const json = await res.json();
+                return json.success ? json.data.url : null;
+            } catch (e) { return null; }
+        }
+
+        // Sincronización en Tiempo Real
+        onValue(ref(db, 'liga'), (snap) => {
+            const data = snap.val() || {};
+            window.equipos = data.equipos ? Object.values(data.equipos) : [];
+            window.partidos = data.partidos ? Object.values(data.partidos) : [];
+            window.jugadoras = data.jugadoras ? Object.values(data.jugadoras) : [];
+            window.identidadesVerificadas = data.identidades || {};
+            window.totalJornadas = data.totalJornadas || 1;
+            actualizarTodo();
         });
 
-        // --- FUNCIÓN PARA AGREGAR EQUIPOS ---
+        // Guardar Equipos
         window.agregarEquipo = async function() {
             const n = document.getElementById('nombreEquipo').value.trim();
-            const z = document.getElementById('zonaEquipo')?.value || "A";
-            if (!n) return showStatus("Escribe el nombre del club", true);
-            
-            const newRef = push(ref(db, 'liga/equipos'));
-            await set(newRef, { 
-                id: Date.now(), 
-                nombre: n.toUpperCase(), 
-                zona: z,
-                logo: "" 
-            });
-            
-            document.getElementById('nombreEquipo').value = "";
-            showStatus("¡Equipo guardado!");
+            if (!n) return;
+            showStatus("Subiendo escudo a la nube...");
+            const url = await subirAInternet(window.logoClubTemporal);
+            const r = push(ref(db, 'liga/equipos'));
+            set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: url || 'LOGO.LIGADELASNENAS.jpeg' });
+            document.getElementById('nombreEquipo').value = ""; window.resetFormLogo();
+            showStatus("¡Equipo guardado con éxito!");
         };
 
-        // --- FUNCIÓN PARA FICHAR JUGADORAS ---
+        // Fichar Personas
         window.ficharPersona = async function() {
             const ape = document.getElementById('apellidoJugadora').value.trim();
             const nom = document.getElementById('nombreJugadora').value.trim();
             const d = document.getElementById('dniJugadora').value.trim();
             const clId = document.getElementById('clubJugadora').value;
-            
             if (!ape || !nom || !clId || !d) return showStatus("Faltan datos", true);
-
-            const newId = Date.now();
-            let p = { 
-                id: newId, 
-                nombre: `${ape} ${nom}`.toUpperCase(), 
-                dni: d, 
-                clubId: parseInt(clId), 
-                tipo: window.tipoFichajeActual || "jugadora",
-                foto: "" 
-            };
             
-            const fn = document.getElementById('fechaNacimientoJugadora')?.value;
-            if(fn) {
-                p.fechaNac = fn;
-                p.cat = window.calcularCategoria(fn);
+            showStatus("Subiendo fotos... no cierres la web");
+            const urlPerfil = await subirAInternet(window.fotoTemporal);
+            const urlDni = await subirAInternet(window.fotoDniTemporal);
+
+            let p = { id: Date.now(), nombre: `${ape} ${nom}`.toUpperCase(), dni: d, clubId: parseInt(clId), tipo: window.tipoFichajeActual, foto: urlPerfil, fotoDni: urlDni };
+            if (window.tipoFichajeActual === 'jugadora') {
+                const fn = document.getElementById('fechaNacimientoJugadora').value;
+                p.fechaNac = fn; p.cat = window.calcularCategoria(fn);
             }
-
-            await set(push(ref(db, 'liga/jugadoras')), p);
-            showStatus("¡Fichaje realizado!");
-            document.getElementById('apellidoJugadora').value = "";
-            document.getElementById('nombreJugadora').value = "";
-            document.getElementById('dniJugadora').value = "";
+            set(push(ref(db, 'liga/jugadoras')), p);
+            if(window.identidadesVerificadas[d]) set(ref(db, `liga/identidades/${d}`), window.identidadesVerificadas[d]);
+            showStatus("¡Fichaje exitoso!");
+            document.getElementById('apellidoJugadora').value = ""; document.getElementById('nombreJugadora').value = ""; document.getElementById('dniJugadora').value = "";
+            window.resetFormFoto();
         };
 
-        // --- BORRAR CLUB ---
-        window.borrarClubAction = function(id) {
-            if(!confirm("¿Eliminar este club?")) return;
-            onValue(ref(db, 'liga/equipos'), (s) => {
-                s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); });
-            }, {onlyOnce: true});
-        };
-
-        // --- UTILIDADES DE INTERFAZ ---
-        window.actualizarTodo = () => {
-            renderEquiposList();
-            actualizarSelectsEquipos();
-            renderListaFichajes();
-            // Aquí puedes llamar a renderTablasStandings si tienes la lógica de puntos
-        };
-
-        window.renderEquiposList = () => {
-            const container = document.getElementById('lista-clubes-botones');
-            if (!container) return;
-            container.innerHTML = window.equipos.map(e => `
-                <div class="flex gap-2 mb-3 bg-white p-4 rounded-2xl shadow-md justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <span class="font-black oswald uppercase text-xl">${e.nombre}</span>
-                        <span class="zona-badge ${e.zona === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${e.zona}</span>
-                    </div>
-                    ${window.isAdmin ? `<button onclick="borrarClubAction('${e.id}')" class="bg-red-500 text-white p-2 rounded-lg">🗑️</button>` : ''}
-                </div>
-            `).join('');
-        };
-
-        window.actualizarSelectsEquipos = () => {
-            const select = document.getElementById('clubJugadora');
-            if (select) {
-                select.innerHTML = window.equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
-            }
-        };
-
-        window.renderListaFichajes = () => {
-            const container = document.getElementById('lista-fichajes');
-            if (!container) return;
-            container.innerHTML = window.jugadoras.map(j => `
-                <div class="bg-white p-3 rounded-xl mb-2 flex justify-between items-center">
-                    <div class="text-left">
-                        <div class="font-bold text-xs">${j.nombre}</div>
-                        <div class="text-[10px] text-pink-600 font-bold">${j.cat || 'DELEGADO'} - DNI ${j.dni}</div>
-                    </div>
-                    <button onclick="verCarnet('${j.id}')" class="text-xl">🪪</button>
-                </div>
-            `).join('');
-        };
-
-        window.calcularCategoria = (f) => {
-            const a = new Date(f).getFullYear();
-            if (a <= 2012 && a >= 2011) return "2011/12";
-            if (a <= 2014 && a >= 2013) return "2013/14";
-            if (a <= 2016 && a >= 2015) return "2015/16";
-            if (a <= 2018 && a >= 2017) return "2017/18";
-            if (a <= 2020 && a >= 2019) return "2019/20";
-            return "---";
-        };
-
-        window.showStatus = (msg, isError = false) => {
-            const el = document.getElementById('status-message');
-            el.innerText = msg; el.style.backgroundColor = isError ? '#ef4444' : '#10b981';
-            el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 3000);
-        };
-
-        window.switchView = (v, btn) => {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('vista-' + v).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        };
-
-        window.toggleAuthModal = () => {
-            if (window.isAdmin) {
-                window.isAdmin = false; document.body.classList.remove('admin-mode');
-                window.actualizarTodo();
-            } else { document.getElementById('auth-modal').style.display = 'flex'; }
-        };
-
-        window.loginAdmin = () => {
-            if (document.getElementById('admin-pwd').value === "ldln2026") {
-                window.isAdmin = true; document.body.classList.add('admin-mode');
-                document.getElementById('auth-modal').style.display = 'none';
-                window.actualizarTodo();
-            } else { alert("Error"); }
-        };
-
-        window.verCarnet = (id) => {
-            const j = window.jugadoras.find(x => x.id == id);
-            const club = window.equipos.find(e => e.id == j.clubId);
-            document.getElementById('id-card-render').innerHTML = `
-                <div class="id-card">
-                    <div class="id-card-header"><span class="oswald font-black text-sm uppercase">LA LIGA DE LAS NENAS</span></div>
-                    <div class="id-card-body">
-                        <div class="id-photo"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"></div>
-                        <div class="id-details">
-                            <div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div>
-                            <div class="id-label">Club</div><div class="id-value text-pink-600">${club ? club.nombre : '---'}</div>
-                            <div class="id-label">DNI</div><div class="id-value">${j.dni}</div>
-                            <div class="id-label">Cat</div><div class="id-value">${j.cat || 'DELEGADO'}</div>
-                        </div>
-                    </div>
-                </div>`;
-            document.getElementById('modal-container').style.display = 'flex';
-        };
-
-        window.cerrarCarnet = () => document.getElementById('modal-container').style.display = 'none';
-        window.closeAuthModal = () => document.getElementById('auth-modal').style.display = 'none';
+        // Acciones de Borrado y Fixture
+        window.borrarClubAction = (id) => { openConfirmModal("Borrar Club", "¿Borrar club y todos sus datos?", () => { onValue(ref(db, 'liga/equipos'), (s) => { s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); }); }, {onlyOnce:true}); }); };
+        window.borrarJugadoraAction = (id) => { openConfirmModal("Borrar Ficha", "¿Eliminar a esta persona?", () => { onValue(ref(db, 'liga/jugadoras'), (s) => { s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/jugadoras/${c.key}`)); }); }, {onlyOnce:true}); }); };
+        window.agregarCruceAlFixture = () => { const l = parseInt(document.getElementById('equipoL').value), v = parseInt(document.getElementById('equipoV').value); if(!l || !v || l==v) return; set(push(ref(db, 'liga/partidos')), { id: Date.now(), jornada: window.jornadaActualNum, lId: l, vId: v, resultados: {} }); cerrarNuevoPartido(); };
+        window.guardarResultadosPartidoActual = () => { if(!window.partidoEditandoId) return; let res = {}; window.categorias.forEach(cat => { const s = cat.replace('/','-'); const gL = document.getElementById(`valL-${s}`).value, gV = document.getElementById(`valV-${s}`).value; const nL = document.getElementById(`npL-${s}`).checked, nV = document.getElementById(`npV-${s}`).checked; if(gL!==""||gV!==""||nL||nV) res[cat] = { gL:parseInt(gL)||0, gV:parseInt(gV)||0, npL:nL, npV:nV }; }); onValue(ref(db, 'liga/partidos'), (s) => { s.forEach(c => { if(c.val().id == window.partidoEditandoId) update(ref(db, `liga/partidos/${c.key}`), { resultados: res }); }); }, {onlyOnce:true}); cerrarDetallePartido(); };
     </script>
-</body>
-</html>
+
+    <script>
+        let fotoTemporal = null, fotoDniTemporal = null, logoClubTemporal = null;
+        let clubActualId = null, categoriaActual = null, partidoEditandoId = null;
+        let tipoFichajeActual = "jugadora";
+
+        function showStatus(msg, isError = false) { 
+            const el = document.getElementById('status-message'); 
+            el.innerText = msg; el.style.backgroundColor = isError ? '#ef4444' : '#10b981'; 
+            el.classList.remove('hidden'); el.style.display = 'block'; 
+            setTimeout(() => { el.classList.add('hidden'); el.style.display = 'none'; }, 3000); 
+        }
+        function openConfirmModal(t, m, c) { document.getElementById('confirm-title').innerText = t; document.getElementById('confirm-message').innerText = m; document.getElementById('confirm-execute-btn').onclick = () => { c(); closeConfirmModal(); }; document.getElementById('confirm-modal').style.display = 'flex'; }
+        function closeConfirmModal() { document.getElementById('confirm-modal').style.display = 'none'; }
+        function cerrarCarnet() { document.getElementById('modal-container').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function cerrarDniModal() { document.getElementById('dni-modal-container').style.display = 'none'; }
+        function cerrarDetallePartido() { document.getElementById('match-detail-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function abrirNuevoPartido() { actualizarSelectsEquipos(); document.getElementById('create-match-modal').style.display = 'flex'; }
+        function cerrarNuevoPartido() { document.getElementById('create-match-modal').style.display = 'none'; }
+        function seleccionarJornada(n) { jornadaActualNum = n; renderPestañasFechas(); renderJornadasAgrupadas(); }
+
+        // --- TABLAS CON TODAS LAS COLUMNAS ---
+        function calcularEstadisticas(cF) {
+             let stats = equipos.map(e => ({ id: e.id, nombre: e.nombre, logo: e.logo, pts: 0, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0 }));
+             partidos.forEach(p => {
+                 categorias.forEach(cat => {
+                    if (cF && cF !== cat) return;
+                    const r = p.resultados ? p.resultados[cat] : null;
+                    if (r && (r.gL !== undefined || r.npL)) {
+                        const loc = stats.find(s => s.id == p.lId), vis = stats.find(s => s.id == p.vId);
+                        if (!loc || !vis) return;
+                        loc.pj++; vis.pj++;
+                        let gL = r.npL ? 0 : (r.gL || 0), gV = r.npV ? 0 : (r.gV || 0);
+                        if (r.npL && !r.npV) gV = 2; else if (r.npV && !r.npL) gL = 2;
+                        loc.gf += gL; loc.gc += gV; vis.gf += gV; vis.gc += gL;
+                        if (gL > gV) { loc.g++; loc.pts += 3; vis.p++; } else if (gL < gV) { vis.g++; vis.pts += 3; loc.p++; } else { loc.e++; vis.e++; loc.pts++; vis.pts++; }
+                    }
+                });
+            });
+             stats.forEach(s => s.dg = s.gf - s.gc);
+             return stats.sort((a, b) => b.pts - a.pts || b.dg - a.dg);
+        }
+
+        function renderTablasStandings() {
+            const container = document.getElementById('tablas-dinamicas');
+            if (!container) return;
+            container.innerHTML = generarHtmlTabla("cat-general", "Clasificación General", calcularEstadisticas(null));
+            categorias.forEach(cat => { container.innerHTML += generarHtmlTabla("cat-" + cat.replace('/', ''), `Categoría ${cat}`, calcularEstadisticas(cat)); });
+        }
+
+        function generarHtmlTabla(id, t, ls) {
+            let filas = ls.map((e, index) => `
+                <tr class="table-row">
+                    <td class="table-cell text-center text-gray-400 w-8 font-black">${index + 1}</td>
+                    <td class="table-cell px-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${e.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-5 h-5 rounded-full object-contain bg-white border">
+                            <span class="truncate uppercase oswald tracking-tight text-gray-700 font-bold">${e.nombre}</span>
+                        </div>
+                    </td>
+                    <td class="table-cell text-center pts-cell">${e.pts}</td>
+                    <td class="table-cell text-center">${e.pj}</td>
+                    <td class="table-cell text-center text-green-500">${e.g}</td>
+                    <td class="table-cell text-center text-yellow-500">${e.e}</td>
+                    <td class="table-cell text-center text-red-500">${e.p}</td>
+                    <td class="table-cell text-center text-[9px] text-gray-400 font-bold">${e.gf}/${e.gc}</td>
+                    <td class="table-cell text-center font-black">${e.dg > 0 ? '+' + e.dg : e.dg}</td>
+                </tr>`).join('');
+            return `<div id="${id}" class="mb-10"><h2 class="oswald text-2xl font-black uppercase text-white mb-4">${t}</h2><div class="table-card"><table class="w-full text-left"><thead><tr class="bg-[#4a3b4d] text-white text-[9px] uppercase"><th class="p-3">#</th><th>Equipo</th><th class="text-center">PTS</th><th class="text-center">PJ</th><th class="text-center">G</th><th class="text-center">E</th><th class="text-center">P</th><th class="text-center">GF/GC</th><th class="text-center">DG</th></tr></thead><tbody>${filas}</tbody></table></div></div>`;
+        }
+
+        // Otros Renders
+        function renderPestañasFechas() { const c = document.getElementById('contenedor-pestañas-fechas'); if(!c) return; let h = ""; for(let i=1; i <= totalJornadas; i++) h += `<div onclick="seleccionarJornada(${i})" class="date-tab ${jornadaActualNum === i ? 'active' : ''}">${i}° Fecha</div>`; c.innerHTML = h; }
+        function renderJornadasAgrupadas() { const c = document.getElementById('contenedor-jornadas-historial'); const f = partidos.filter(p => p.jornada == jornadaActualNum); c.innerHTML = f.map(p => { const l=equipos.find(e=>e.id==p.lId), v=equipos.find(e=>e.id==p.vId); return `<div onclick="abrirDetallePartido(${p.id})" class="bg-white rounded-3xl p-6 mb-3 shadow-md flex items-center justify-between"><div class="flex-1 text-center font-bold text-xs uppercase">${l?.nombre}</div><span class="oswald text-xl text-gray-200 px-4">VS</span><div class="flex-1 text-center font-bold text-xs uppercase">${v?.nombre}</div></div>`; }).join(''); }
+        function renderEquiposList() { const c = document.getElementById('lista-clubes-botones'); if(!c) return; c.innerHTML = equipos.map(e => `<div class="bg-white p-4 rounded-3xl mb-2 flex justify-between items-center shadow-sm"><div onclick="verCategoriasClub(${e.id})" class="flex items-center gap-3"><img src="${e.logo || ''}" class="w-10 h-10 object-contain"><span class="oswald font-bold uppercase">${e.nombre}</span></div><button onclick="borrarClubAction(${e.id})">🗑️</button></div>`).join(''); }
+        function verCategoriasClub(id) { clubActualId = id; const c = equipos.find(e => e.id == id); document.getElementById('detalle-club-nombre').innerText = c.nombre; document.getElementById('detalle-club-escudo').innerHTML = `<img src="${c.logo}" class="w-14 h-14 object-contain">`; document.getElementById('lista-categorias-botones').innerHTML = categorias.map(cat => `<button onclick="verPlantelDetalle('${cat}')" class="bg-white p-4 rounded-2xl mb-2 w-full flex justify-between font-bold uppercase"><span>${cat}</span><span>→</span></button>`).join(''); mostrarSubvista('subvista-club-detalle'); }
+        function renderListaFichajes() { const c = document.getElementById('lista-fichajes'); if(!c) return; c.innerHTML = equipos.map(eq => { const js = jugadoras.filter(j => j.clubId == eq.id); if(!js.length) return ""; return `<div class="bg-white rounded-3xl overflow-hidden mb-4"><div class="bg-[#4a3b4d] p-3 text-white text-xs font-bold uppercase">${eq.nombre}</div>` + js.map(j => `<div class="p-3 flex justify-between items-center border-b"><div class="flex items-center gap-2"><img src="${j.foto}" class="w-8 h-8 rounded object-cover"><div class="text-[10px] font-bold uppercase"><div>${j.nombre}</div><div class="text-pink-500">${j.cat || 'DEL'}</div></div></div><button onclick="verCarnet(${j.id})">🪪</button></div>`).join('') + "</div>"; }).join(''); }
+        
+        // UI Utils
+        function setTipoFichaje(t) { tipoFichajeActual = t; document.getElementById('btn-type-jugadora').className = t=='jugadora'?'fichaje-type-btn active':'fichaje-type-btn inactive'; document.getElementById('btn-type-delegado').className = t=='delegado'?'fichaje-type-btn active':'fichaje-type-btn inactive'; }
+        function actualizarSelectsEquipos() { const h = equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join(''); ['equipoL', 'equipoV', 'clubJugadora'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = h || '<option value="">- Primero crea clubes -</option>'; }); }
+        function mostrarSubvista(id) { document.querySelectorAll('.sub-view').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function switchView(id, btn) { document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active')); document.getElementById('vista-'+id).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); if(id=='equipos') mostrarSubvista('subvista-equipos-lista'); actualizarTodo(); }
+        function calcularCategoria(f) { const y = new Date(f + "T00:00:00").getFullYear(); if(y==2011||y==2012) return "2011/12"; if(y==2013||y==2014) return "2013/14"; if(y==2015||y==2016) return "2015/16"; if(y==2017||y==2018) return "2017/18"; if(y==2019||y==2020) return "2019/20"; return "---"; }
+        function previewFoto(e, t) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { if(t=='perfil') { fotoTemporal = ev.target.result; document.getElementById('image-preview').src = ev.target.result; document.getElementById('image-preview').classList.remove('hidden'); document.getElementById('placeholder-icon').classList.add('hidden'); } else { fotoDniTemporal = ev.target.result; document.getElementById('dni-image-preview').src = ev.target.result; document.getElementById('dni-image-preview').classList.remove('hidden'); } }; r.readAsDataURL(f); } }
+        function previewLogoClub(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { logoClubTemporal = ev.target.result; document.getElementById('club-logo-preview').src = ev.target.result; document.getElementById('club-logo-preview').classList.remove('hidden'); document.getElementById('club-placeholder-logo').classList.add('hidden'); }; r.readAsDataURL(f); } }
+        function resetFormFoto() { fotoTemporal=null; fotoDniTemporal=null; document.getElementById('image-preview').classList.add('hidden'); document.getElementById('placeholder-icon').classList.remove('hidden'); document.getElementById('dni-image-preview').classList.add('hidden'); }
+        function resetFormLogo() { logoClubTemporal=null; document.getElementById('club-logo-preview').classList.add('hidden'); document.getElementById('club-placeholder-logo').classList.remove('hidden'); }
+        function verCarnet(id) { const j = jugadoras.find(p => p.id == id); const c = equipos.find(e => e.id == j.clubId); document.getElementById('id-card-render').innerHTML = `<div class="id-card"><div class="id-card-header"><img src="${c?.logo || ''}" class="w-8 h-8 bg-white rounded-full p-1"><span class="oswald text-xs ml-2">Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${j.foto || ''}"></div><div class="id-details"><div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div><div class="id-label">Club</div><div class="id-value text-pink-600">${c?.nombre}</div><div class="id-label">Cat/DNI</div><div class="id-value text-[10px]">${j.cat} / ${j.dni}</div></div></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; }
+        function cambiarSeccionPlantel(s) { document.getElementById('tab-plantel-jugadoras').classList.toggle('active', s=='jugadoras'); document.getElementById('tab-plantel-partidos').classList.toggle('active', s=='partidos'); document.getElementById('contenedor-jugadoras-fichadas').classList.toggle('hidden', s!='jugadoras'); document.getElementById('contenedor-partidos-equipo').classList.toggle('hidden', s!='partidos'); }
+        function verPlantelDetalle(cat) { categoriaActual = cat; document.getElementById('plantel-categoria-nombre').innerText = "CATEGORÍA " + cat; const js = jugadoras.filter(j => j.clubId == clubActualId && j.cat == cat); document.getElementById('contenedor-jugadoras-fichadas').innerHTML = js.map(j => `<div class="bg-white p-3 rounded-2xl mb-2 flex justify-between items-center shadow-sm"><div><b>${j.nombre}</b></div><button onclick="verCarnet(${j.id})">🪪</button></div>`).join(''); mostrarSubvista('subvista-plantel-detalle'); }
+        function irACategoria(id, btn) { const el = document.getElementById(id); if(el) el.scrollIntoView({ behavior: 'smooth' }); }
+        function actualizarTodo() { renderTablasStandings(); renderEquiposList(); renderListaFichajes(); renderPestañasFechas(); renderJornadasAgrupadas(); actualizarSelectsEquipos(); }
+        window.onload = () => { actualizarTodo(); };
+    </script>
+</body></html>
