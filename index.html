@@ -1,114 +1,84 @@
-<!DOCTYPE html><html lang="es"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>La Liga de las Nenas - Oficial</title>    <script src="https://cdn.tailwindcss.com"></script>    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">    <style>        body {            font-family: 'Roboto', sans-serif;            background: linear-gradient(to bottom, #ff7bc1, #ffb3d9, #ffffff);            min-height: 100vh;            margin: 0;            scroll-behavior: smooth;        }        .oswald { font-family: 'Oswald', sans-serif; }        .header-text { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }                .tab-btn {            background-color: rgba(255, 255, 255, 0.3);            color: #4a3b4d;            border: 1px solid rgba(255, 255, 255, 0.2);            transition: all 0.3s ease;        }        .tab-btn.active {            background: linear-gradient(to bottom, #e6338a, #c2185b);            color: white;            box-shadow: 0 4px 10px rgba(0,0,0,0.2);            border-color: transparent;        }                .category-tab {            border-bottom: 3px solid transparent;            color: #94a3b8;            font-weight: 900;            text-transform: uppercase;            font-size: 12px;            padding: 10px 0;            transition: all 0.3s;        }        .category-tab.active {            border-bottom: 3px solid #e6338a;            color: #e6338a;        }
-        .view-section, .sub-view { display: none; }        .view-section.active, .sub-view.active {            display: block;            animation: slideIn 0.3s ease-out;        }        @keyframes slideIn {            from { opacity: 0; transform: translateX(20px); }            to { opacity: 1; transform: translateX(0); }        }
-        #modal-container, #dni-modal-container, #confirm-modal, #match-detail-modal, #create-match-modal {            display: none;            position: fixed;            inset: 0;            background: rgba(0,0,0,0.9);            z-index: 200;            align-items: center;            justify-content: center;            backdrop-filter: blur(10px);            padding: 20px;        }
-        .id-card {            width: 330px;            height: 210px;            background: white;            border-radius: 18px;            position: relative;            overflow: hidden;            box-shadow: 0 15px 30px rgba(0,0,0,0.3);            border: 2px solid rgba(255,255,255,0.8);            margin: auto;        }        .id-card-header {            background: linear-gradient(to right, #e6338a, #c2185b);            height: 55px;            padding: 10px 15px;            color: white;            display: flex;            align-items: center; gap: 10px;        }        .id-card-body { display: flex; padding: 15px; gap: 15px; position: relative; }        .id-photo {            width: 90px; height: 110px;            background: #f1f5f9; border: 3px solid #ff7bc1; border-radius: 10px;            display: flex; align-items: center; justify-content: center;            overflow: hidden; z-index: 10;        }        .id-photo img { width: 100%; height: 100%; object-fit: cover; }        .id-details { flex: 1; z-index: 10; }        .id-label { font-size: 8px; color: #94a3b8; text-transform: uppercase; font-weight: 900; margin-bottom: -1px; }        .id-value { font-size: 13px; color: #1e293b; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }        .id-footer {            position: absolute; bottom: 0; width: 100%; height: 28px;            background: #2d1b2e; display: flex; align-items: center; justify-content: center;            font-size: 10px; color: #ffb3d9; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;        }
-        .zona-selector-btn { padding: 10px 24px; font-weight: 900; font-size: 11px; text-transform: uppercase; border-radius: 9999px; transition: all 0.3s; }        .zona-selector-btn.active { background: #e6338a; color: white; box-shadow: 0 4px 10px rgba(230, 51, 138, 0.3); }        .zona-selector-btn.inactive { background: rgba(255, 255, 255, 0.5); color: #4a3b4d; }
-        .table-card { background: white; border-radius: 2rem; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }        .table-header-cell { padding: 12px 6px; font-size: 9px; text-transform: uppercase; font-weight: 900; color: #94a3b8; letter-spacing: 0.05em; }        .table-row { border-bottom: 1px solid #f1f5f9; }        .pts-cell { background-color: #fff1f8; color: #e6338a; font-weight: 900; font-size: 13px; }
-        .fichaje-type-btn { flex: 1; padding: 10px; font-size: 10px; font-weight: 900; text-transform: uppercase; border-radius: 12px; transition: all 0.3s; }        .fichaje-type-btn.active { background: #4a3b4d; color: white; }        .fichaje-type-btn.inactive { background: #f1f5f9; color: #94a3b8; }    </style></head><body class="pb-20">
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+  import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-    <div id="status-message" class="fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] hidden text-white transition-all"></div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",
+    authDomain: "ldln2026.firebaseapp.com",
+    databaseURL: "https://ldln2026-default-rtdb.firebaseio.com",
+    projectId: "ldln2026",
+    storageBucket: "ldln2026.firebasestorage.app",
+    messagingSenderId: "1071996748084",
+    appId: "1:1071996748084:web:65912e20c1af6e9df72561"
+  };
 
-    <header id="inicio" class="pt-10 pb-6 px-6 text-center relative text-white">        <div class="flex justify-between items-center max-w-md mx-auto leading-none">            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">            <h1 class="oswald text-4xl font-black uppercase leading-none header-text tracking-tighter text-center">LA LIGA DE LAS<br>NENAS</h1>            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">        </div>    </header>
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-    <main class="max-w-md mx-auto px-4 mt-4 text-center">        <div class="grid grid-cols-4 gap-2 mb-8 leading-none">            <button onclick="switchView('posiciones', this)" class="tab-btn active rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <span class="text-[9px] font-bold uppercase leading-tight">Tablas</span>            </button>            <button onclick="switchView('fechas', this)" class="tab-btn rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <span class="text-[9px] font-bold uppercase leading-tight">Fixture</span>            </button>            <button onclick="switchView('equipos', this)" class="tab-btn rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <span class="text-[9px] font-bold uppercase leading-tight">Equipos</span>            </button>            <button onclick="switchView('fichar', this)" class="tab-btn rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">                <span class="text-[9px] font-bold uppercase leading-tight">Fichar</span>            </button>        </div>
+  // --- SINCRONIZACIÓN EN TIEMPO REAL ---
+  onValue(ref(db, 'liga'), (snapshot) => {
+    const data = snapshot.val() || {};
+    window.equipos = data.equipos ? Object.values(data.equipos) : [];
+    window.jugadoras = data.jugadoras ? Object.values(data.jugadoras) : [];
+    window.partidos = data.partidos ? Object.values(data.partidos) : [];
+    
+    // Actualiza los selectores y tablas de tu código original
+    if (typeof window.actualizarTodo === "function") window.actualizarTodo();
+  });
 
-        <section id="vista-posiciones" class="view-section active">            <div class="flex justify-center gap-2 mb-6 bg-white/20 p-1.5 rounded-full backdrop-blur-sm">                <button onclick="setZonaTablas('A')" id="btn-zona-tables-a" class="zona-selector-btn active">Zona A</button>                <button onclick="setZonaTablas('B')" id="btn-zona-tables-b" class="zona-selector-btn inactive">Zona B</button>            </div>            <div class="flex gap-2 mb-8 overflow-x-auto pb-4 no-scrollbar sticky top-2 z-20">                <button onclick="irACategoria('cat-general', this)" class="cat-btn category-btn-active px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">General</button>                <button onclick="irACategoria('cat-201112', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2011/12</button>                <button onclick="irACategoria('cat-201314', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2013/14</button>                <button onclick="irACategoria('cat-201516', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2015/16</button>                <button onclick="irACategoria('cat-201718', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2017/18</button>                <button onclick="irACategoria('cat-201920', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2019/20</button>            </div>            <div id="tablas-dinamicas" class="space-y-12 text-left"></div>        </section>
+  // --- FUNCIÓN PARA AGREGAR EQUIPOS ---
+  window.agregarEquipo = async function() {
+    const n = document.getElementById('nombreEquipo').value.trim();
+    const z = document.getElementById('zonaEquipo')?.value || "A";
+    if (!n) return alert("Escribe el nombre del club");
+    
+    const newRef = push(ref(db, 'liga/equipos'));
+    await set(newRef, { 
+        id: Date.now(), 
+        nombre: n.toUpperCase(), 
+        zona: z,
+        logo: "" // Queda vacío por ahora
+    });
+    
+    document.getElementById('nombreEquipo').value = "";
+    alert("¡Equipo guardado en la nube!");
+  };
 
-        <section id="vista-fechas" class="view-section">            <div class="flex justify-center gap-2 mb-6 bg-white/20 p-1.5 rounded-full backdrop-blur-sm">                <button onclick="setZonaFixture('A')" id="btn-zona-fixture-a" class="zona-selector-btn active">Zona A</button>                <button onclick="setZonaFixture('B')" id="btn-zona-fixture-b" class="zona-selector-btn inactive">Zona B</button>            </div>            <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar mb-6" id="contenedor-pestañas-fechas"></div>            <div class="flex items-center justify-between mb-8 px-1">                <button onclick="abrirEstadisticasFecha()" class="bg-yellow-300 text-[9px] font-black text-yellow-900 px-4 py-2.5 rounded-full shadow-sm uppercase">Estadísticas</button>                <div class="flex gap-2">                    <button onclick="abrirNuevoPartido()" class="bg-red-600 text-white flex items-center gap-1.5 px-4 py-2.5 rounded-full shadow-md text-[9px] font-black uppercase">+ Partido</button>                    <button onclick="eliminarJornadaActual()" class="text-gray-400 p-2">🗑️</button>                </div>            </div>            <div id="contenedor-jornadas-historial" class="space-y-4 text-left"></div>        </section>
+  // --- FUNCIÓN PARA FICHAR JUGADORAS/DELEGADOS ---
+  window.ficharPersona = async function() {
+    const ape = document.getElementById('apellidoJugadora').value.trim();
+    const nom = document.getElementById('nombreJugadora').value.trim();
+    const d = document.getElementById('dniJugadora').value.trim();
+    const clId = document.getElementById('clubJugadora').value;
+    
+    if (!ape || !nom || !clId || !d) return alert("Faltan datos");
 
-        <section id="vista-equipos" class="view-section leading-none">            <div id="subvista-equipos-lista" class="sub-view active">                <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e]">Clubes Registrados</h2>                <div class="bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center">                    <div class="flex flex-col items-center mb-6">                        <div class="relative">                            <div id="club-logo-preview-container" class="w-24 h-24 bg-white/80 rounded-full border-2 border-dashed border-pink-400 flex items-center justify-center overflow-hidden"><img id="club-logo-preview" class="hidden w-full h-full object-contain"><span>ESCUDO</span></div>                            <input type="file" id="input-logo-club" accept="image/*" class="hidden" onchange="previewLogoClub(event)">                            <button onclick="document.getElementById('input-logo-club').click()" class="absolute -bottom-1 -right-1 bg-pink-600 text-white p-2 rounded-full border-2 border-white shadow-lg leading-none">+</button>                        </div>                    </div>                    <input type="text" id="nombreEquipo" placeholder="NOMBRE DEL CLUB" class="w-full px-4 py-4 rounded-xl bg-white border-none font-black text-center text-gray-700 uppercase outline-none mb-4">                    <select id="zonaEquipo" class="w-full px-4 py-4 rounded-xl bg-white border-none font-black text-center text-gray-700 uppercase outline-none mb-4">                        <option value="A">ZONA A</option>                        <option value="B">ZONA B</option>                    </select>                    <button onclick="agregarEquipo()" class="w-full py-4 bg-gradient-to-r from-[#e6338a] to-[#c2185b] text-white font-black uppercase rounded-xl shadow-md">Agregar Equipo</button>                </div>                <div id="lista-clubes-botones" class="grid grid-cols-1 gap-4 text-left"></div>            </div>            <div id="subvista-club-detalle" class="sub-view text-left">                <button onclick="mostrarSubvista('subvista-equipos-lista')" class="text-pink-700 font-black mb-6 uppercase text-[11px]">← Volver</button>                <div class="bg-[#4a3b4d] rounded-3xl p-6 text-white mb-8 flex items-center gap-4 shadow-xl">                    <div id="detalle-club-escudo" class="w-14 h-14 bg-white rounded-full p-1 overflow-hidden"></div>                    <h2 id="detalle-club-nombre" class="oswald text-3xl font-black uppercase">---</h2>                    <button onclick="borrarClubAction(clubActualId)" class="ml-auto bg-red-500 p-2 rounded-lg">🗑️</button>                </div>                <div id="lista-categorias-botones" class="grid grid-cols-1 gap-3"></div>            </div>            <div id="subvista-plantel-detalle" class="sub-view text-left">                <button onclick="mostrarSubvista('subvista-club-detalle')" class="text-pink-700 font-black mb-6 uppercase text-[11px]">← Volver</button>                <h3 id="plantel-categoria-nombre" class="oswald text-4xl font-black text-pink-600 uppercase mb-6 text-center">---</h3>                <div id="contenedor-jugadoras-fichadas" class="space-y-3"></div>            </div>        </section>
+    const newId = Date.now();
+    let p = { 
+        id: newId, 
+        nombre: `${ape} ${nom}`.toUpperCase(), 
+        dni: d, 
+        clubId: parseInt(clId), 
+        tipo: window.tipoFichajeActual || "jugadora",
+        foto: "" 
+    };
+    
+    const fn = document.getElementById('fechaNacimientoJugadora')?.value;
+    if(fn && typeof window.calcularCategoria === "function") {
+      p.fechaNac = fn;
+      p.cat = window.calcularCategoria(fn);
+    }
 
-        <section id="vista-fichar" class="view-section">            <div class="bg-white/40 p-6 rounded-3xl shadow-lg text-center">                <div class="flex gap-4 justify-center mb-8">                    <div class="flex flex-col items-center">                        <div class="w-24 h-32 bg-white rounded-xl border-2 border-dashed border-pink-400 overflow-hidden flex items-center justify-center">                            <img id="image-preview" class="hidden w-full h-full object-cover"><span>ROSTRO</span>                        </div>                        <input type="file" id="input-foto" accept="image/*" class="hidden" onchange="previewFoto(event, 'perfil')">                        <button onclick="document.getElementById('input-foto').click()" class="bg-pink-600 text-white px-4 py-1 rounded-full text-[10px] mt-2 font-bold uppercase">Subir</button>                    </div>                    <div class="flex flex-col items-center">                        <div class="w-24 h-32 bg-white rounded-xl border-2 border-dashed border-pink-400 overflow-hidden flex items-center justify-center">                            <img id="dni-image-preview" class="hidden w-full h-full object-cover"><span>DNI</span>                        </div>                        <input type="file" id="input-foto-dni" accept="image/*" class="hidden" onchange="previewFoto(event, 'dni')">                        <button onclick="document.getElementById('input-foto-dni').click()" class="bg-[#4a3b4d] text-white px-4 py-1 rounded-full text-[10px] mt-2 font-bold uppercase">Subir</button>                    </div>                </div>                <div class="space-y-4 text-left">                    <input type="text" id="apellidoJugadora" placeholder="APELLIDO" class="w-full px-4 py-3 rounded-xl uppercase font-bold outline-none shadow-sm">                    <input type="text" id="nombreJugadora" placeholder="NOMBRE" class="w-full px-4 py-3 rounded-xl uppercase font-bold outline-none shadow-sm">                    <input type="number" id="dniJugadora" placeholder="DNI" class="w-full px-4 py-3 rounded-xl font-bold outline-none shadow-sm">                    <input type="date" id="fechaNacimientoJugadora" class="w-full px-4 py-3 rounded-xl font-bold outline-none shadow-sm">                    <select id="clubJugadora" class="w-full px-4 py-3 rounded-xl font-bold outline-none shadow-sm"></select>                    <button onclick="ficharPersona()" class="w-full py-4 mt-4 bg-pink-600 text-white font-black uppercase rounded-2xl shadow-xl">Fichar Persona</button>                </div>            </div>            <div id="lista-fichajes" class="mt-10"></div>        </section>    </main>
+    await set(push(ref(db, 'liga/jugadoras')), p);
+    alert("¡Fichaje realizado!");
+    if (typeof window.resetFormFoto === "function") window.resetFormFoto();
+  };
 
-    <div id="modal-container" onclick="cerrarCarnet()">        <div class="p-2" onclick="event.stopPropagation()">            <div id="id-card-render"></div>            <button onclick="cerrarCarnet()" class="w-full mt-6 py-4 bg-white text-pink-600 font-black rounded-2xl shadow-xl">CERRAR</button>        </div>    </div>
-
-    <div id="create-match-modal">        <div class="bg-white rounded-3xl p-8 max-w-sm w-full">            <h3 class="oswald text-xl font-black mb-6">NUEVO PARTIDO</h3>            <select id="equipoL" class="w-full p-4 rounded-xl border mb-4"></select>            <select id="equipoV" class="w-full p-4 rounded-xl border mb-6"></select>            <div class="flex gap-2">                <button onclick="cerrarNuevoPartido()" class="flex-1 p-4 bg-gray-100 font-bold rounded-xl">CANCELAR</button>                <button onclick="agregarCruceAlFixture()" class="flex-1 p-4 bg-pink-600 text-white font-bold rounded-xl">CONFIRMAR</button>            </div>        </div>    </div>
-
-    <script type="module">        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
-
-        const firebaseConfig = {            apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",            authDomain: "ldln2026.firebaseapp.com",            databaseURL: "https://ldln2026-default-rtdb.firebaseio.com",            projectId: "ldln2026",            storageBucket: "ldln2026.firebasestorage.app",            messagingSenderId: "1071996748084",            appId: "1:1071996748084:web:65912e20c1af6e9df72561"        };
-
-        const IMGBB_API_KEY = "6af63ceaccd1ceb15108b6545f9202fe";        const app = initializeApp(firebaseConfig);        const db = getDatabase(app);
-
-        async function subirAInternet(base64) {            if (!base64) return null;            const body = new FormData();            body.append("image", base64.split(",")[1]);            try {                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: body });                const json = await res.json();                return json.success ? json.data.url : null;            } catch (e) { return null; }        }
-
-        onValue(ref(db, 'liga'), (snap) => {            const d = snap.val() || {};            window.equipos = d.equipos ? Object.values(d.equipos) : [];            window.partidos = d.partidos ? Object.values(d.partidos) : [];            window.jugadoras = d.jugadoras ? Object.values(d.jugadoras) : [];            actualizarTodo();        });
-
-        window.agregarEquipo = async function() {            const n = document.getElementById('nombreEquipo').value.trim();            const z = document.getElementById('zonaEquipo').value;            if (!n) return;            showStatus("Subiendo escudo...");            const url = await subirAInternet(window.logoClubTemporal);            const r = push(ref(db, 'liga/equipos'));            set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: url || 'LOGO.LIGADELASNENAS.jpeg', zona: z });            document.getElementById('nombreEquipo').value = ""; window.resetFormLogo();            showStatus("Equipo guardado!");        };
-
-        window.ficharPersona = async function() {            const ape = document.getElementById('apellidoJugadora').value.trim(), nom = document.getElementById('nombreJugadora').value.trim(), d = document.getElementById('dniJugadora').value.trim(), clId = document.getElementById('clubJugadora').value;            if (!ape || !nom || !clId || !d) return showStatus("Faltan datos", true);            showStatus("Subiendo fotos...");            const urlP = await subirAInternet(window.fotoTemporal), urlD = await subirAInternet(window.fotoDniTemporal);            let p = { id: Date.now(), nombre: `${ape} ${nom}`.toUpperCase(), dni: d, clubId: parseInt(clId), tipo: window.tipoFichajeActual, foto: urlP, fotoDni: urlD };            const fn = document.getElementById('fechaNacimientoJugadora').value;            if(fn) { p.fechaNac = fn; p.cat = calcularCategoria(fn); }            set(push(ref(db, 'liga/jugadoras')), p);            showStatus("Fichaje exitoso!");            document.getElementById('apellidoJugadora').value = ""; document.getElementById('nombreJugadora').value = ""; document.getElementById('dniJugadora').value = "";            window.resetFormFoto();        };
-
-        window.agregarCruceAlFixture = () => {             const lId = parseInt(document.getElementById('equipoL').value), vId = parseInt(document.getElementById('equipoV').value);             if(!lId || !vId || lId==vId) return;             set(push(ref(db, 'liga/partidos')), { id: Date.now(), jornada: window.jornadaActualNum, lId: lId, vId: vId, resultados: {} });             cerrarNuevoPartido();         };
-
-        window.borrarClubAction = (id) => { onValue(ref(db, 'liga/equipos'), (s) => { s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); }); }, {onlyOnce:true}); mostrarSubvista('subvista-equipos-lista'); };
-    </script>
-
-    <script>
-        let fotoTemporal = null, fotoDniTemporal = null, logoClubTemporal = null;
-        let clubActualId = null, jornadaActualNum = 1, totalJornadas = 1, zonaVisibleTablas = "A", zonaVisibleFixture = "A", tipoFichajeActual = "jugadora";
-        const categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
-
-        function showStatus(msg, isError = false) { const el = document.getElementById('status-message'); el.innerText = msg; el.style.backgroundColor = isError ? '#ef4444' : '#10b981'; el.classList.remove('hidden'); el.style.display = 'block'; setTimeout(() => { el.classList.add('hidden'); }, 3000); }
-        function setZonaTablas(z) { zonaVisibleTablas = z; document.getElementById('btn-zona-tables-a').className = z==='A'?'zona-selector-btn active':'zona-selector-btn inactive'; document.getElementById('btn-zona-tables-b').className = z==='B'?'zona-selector-btn active':'zona-selector-btn inactive'; renderTablasStandings(); }
-        function setZonaFixture(z) { zonaVisibleFixture = z; document.getElementById('btn-zona-fixture-a').className = z==='A'?'zona-selector-btn active':'zona-selector-btn inactive'; document.getElementById('btn-zona-fixture-b').className = z==='B'?'zona-selector-btn active':'zona-selector-btn inactive'; renderJornadasAgrupadas(); }
-        function switchView(id, btn) { document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active')); document.getElementById('vista-'+id).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); actualizarTodo(); }
-        function mostrarSubvista(id) { document.querySelectorAll('.sub-view').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        function actualizarSelectsEquipos() { const h = window.equipos.map(e => `<option value="${e.id}">${e.nombre} (ZONA ${e.zona})</option>`).join(''); ['equipoL', 'equipoV', 'clubJugadora'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = h || '<option value="">Crea equipos...</option>'; }); }
-
-        // --- TABLAS COMPLETAS RECUPERADAS ---
-        function calcularEstadisticas(cF, zonaF) {
-             let stats = equipos.filter(e => !zonaF || e.zona === zonaF).map(e => ({ id: e.id, nombre: e.nombre, logo: e.logo, pts: 0, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0 }));
-             partidos.forEach(p => {
-                 categorias.forEach(cat => {
-                    if (cF && cF !== cat) return;
-                    const r = p.resultados ? p.resultados[cat] : null;
-                    if (r && r.gL !== undefined) {
-                        const loc = stats.find(s => s.id == p.lId), vis = stats.find(s => s.id == p.vId);
-                        if (!loc || !vis) return;
-                        loc.pj++; vis.pj++;
-                        let gL = parseInt(r.gL), gV = parseInt(r.gV);
-                        loc.gf += gL; loc.gc += gV; vis.gf += gV; vis.gc += gL;
-                        if (gL > gV) { loc.g++; loc.pts += 3; vis.p++; } else if (gL < gV) { vis.g++; vis.pts += 3; loc.p++; } else { loc.e++; vis.e++; loc.pts++; vis.pts++; }
-                    }
-                });
-            });
-             stats.forEach(s => s.dg = s.gf - s.gc);
-             return stats.sort((a, b) => b.pts - a.pts || b.dg - a.dg);
-        }
-
-        function renderTablasStandings() {
-            const c = document.getElementById('tablas-dinamicas'); if(!c) return;
-            c.innerHTML = generarHtmlTabla("cat-general", "Clasificación General", calcularEstadisticas(null, zonaVisibleTablas));
-            categorias.forEach(cat => { c.innerHTML += generarHtmlTabla("cat-" + cat.replace('/', ''), "Categoría " + cat, calcularEstadisticas(cat, zonaVisibleTablas)); });
-        }
-
-        function generarHtmlTabla(id, t, ls) {
-            let f = ls.map((e, i) => `<tr class="table-row"><td class="table-cell text-center text-gray-400 font-black">${i+1}</td><td class="table-cell px-2"><div class="flex items-center gap-2"><img src="${e.logo}" class="w-5 h-5 rounded-full object-contain bg-white border"><span class="truncate uppercase oswald tracking-tight text-gray-700 font-bold">${e.nombre}</span></div></td><td class="table-cell text-center pts-cell">${e.pts}</td><td class="table-cell text-center">${e.pj}</td><td class="table-cell text-center text-green-500">${e.g}</td><td class="table-cell text-center text-yellow-500">${e.e}</td><td class="table-cell text-center text-red-500">${e.p}</td><td class="table-cell text-center text-[10px] text-gray-400 font-bold">${e.gf}/${e.gc}</td><td class="table-cell text-center font-black">${e.dg > 0 ? '+' + e.dg : e.dg}</td></tr>`).join('');
-            return `<div id="${id}" class="mb-10"><h2 class="oswald text-2xl font-black uppercase text-white mb-4">${t}</h2><div class="table-card"><table class="w-full text-left"><thead><tr class="bg-[#4a3b4d] text-[9px] text-white uppercase"><th class="p-3">#</th><th>Equipo</th><th class="text-center">PTS</th><th class="text-center">PJ</th><th class="text-center">G</th><th class="text-center">E</th><th class="text-center">P</th><th class="text-center">Goles</th><th class="text-center">DG</th></tr></thead><tbody>${f}</tbody></table></div></div>`;
-        }
-
-        function renderJornadasAgrupadas() {
-            const c = document.getElementById('contenedor-jornadas-historial'); if(!c) return;
-            const f = partidos.filter(p => { const loc = equipos.find(e => e.id == p.lId); return p.jornada == jornadaActualNum && loc && loc.zona === zonaVisibleFixture; });
-            c.innerHTML = f.map(p => {
-                const l=equipos.find(e=>e.id==p.lId), v=equipos.find(e=>e.id==p.vId);
-                return `<div class="bg-white rounded-3xl p-4 mb-3 shadow-sm flex items-center justify-between"><div class="flex-1 text-center font-bold text-[10px] uppercase">${l?.nombre}</div><span class="px-4 font-black text-gray-200">VS</span><div class="flex-1 text-center font-bold text-[10px] uppercase">${v?.nombre}</div></div>`;
-            }).join('') || "<p class='text-white font-bold py-10'>No hay partidos en esta zona</p>";
-        }
-
-        function renderEquiposList() { const c = document.getElementById('lista-clubes-botones'); if(!c) return; c.innerHTML = equipos.map(e => `<div class="bg-white p-4 rounded-3xl mb-2 flex justify-between items-center shadow-sm"><div onclick="verCategoriasClub(${e.id})" class="flex items-center gap-3"><img src="${e.logo}" class="w-10 h-10 object-contain"><span class="oswald font-bold uppercase">${e.nombre} (ZONA ${e.zona})</span></div><button onclick="borrarClubAction(${e.id})">🗑️</button></div>`).join(''); }
-        function verCategoriasClub(id) { clubActualId = id; const c = equipos.find(e => e.id == id); document.getElementById('detalle-club-nombre').innerText = c.nombre; document.getElementById('detalle-club-escudo').innerHTML = `<img src="${c.logo}" class="w-10 h-10">`; const b = document.getElementById('lista-categorias-botones'); b.innerHTML = categorias.map(cat => `<button onclick="verPlantelDetalle('${cat}')" class="bg-white p-4 rounded-2xl mb-2 w-full flex justify-between font-bold uppercase"><span>${cat}</span><span>→</span></button>`).join(''); mostrarSubvista('subvista-club-detalle'); }
-        function verPlantelDetalle(cat) { document.getElementById('plantel-categoria-nombre').innerText = "Categoría " + cat; const js = jugadoras.filter(j => j.clubId == clubActualId && j.cat == cat); document.getElementById('contenedor-jugadoras-fichadas').innerHTML = js.map(j => `<div class="bg-white p-4 rounded-2xl mb-2 flex justify-between items-center shadow-sm"><div class="flex items-center gap-3"><img src="${j.foto}" class="w-10 h-10 rounded object-cover"><b>${j.nombre}</b></div><button onclick="verCarnet(${j.id})">🪪</button></div>`).join(''); mostrarSubvista('subvista-plantel-detalle'); }
-        function verCarnet(id) { const j = jugadoras.find(p => p.id == id); const c = equipos.find(e => e.id == j.clubId); document.getElementById('id-card-render').innerHTML = `<div class="id-card"><div class="id-card-header"><img src="${c?.logo || ''}" class="w-8 h-8 bg-white rounded-full p-1"><span class="oswald text-xs ml-2 uppercase">Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${j.foto || ''}"></div><div class="id-details"><div class="id-label">Nombre</div><div class="id-value leading-none uppercase">${j.nombre}</div><div class="id-label uppercase">Club</div><div class="id-value text-pink-600 uppercase">${c?.nombre}</div><div class="id-label">DNI</div><div class="id-value text-[10px]">${j.dni}</div></div></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; }
-        function renderListaFichajes() { const c = document.getElementById('lista-fichajes'); if(!c) return; c.innerHTML = equipos.map(eq => { const js = jugadoras.filter(j => j.clubId == eq.id); if(!js.length) return ""; return `<div class="bg-white rounded-3xl overflow-hidden mb-4"><div class="bg-[#4a3b4d] p-3 text-white text-xs font-bold uppercase">${eq.nombre}</div>` + js.map(j => `<div class="p-3 flex justify-between items-center border-b"><div class="flex items-center gap-2"><img src="${j.foto}" class="w-8 h-8 rounded"><span class="text-[10px] font-bold uppercase">${j.nombre}</span></div><button onclick="verCarnet(${j.id})">🪪</button></div>`).join('') + "</div>"; }).join(''); }
-        function renderPestañasFechas() { const c = document.getElementById('contenedor-pestañas-fechas'); if(!c) return; let h = ""; for(let i=1; i <= totalJornadas; i++) h += `<div onclick="seleccionarJornada(${i})" class="date-tab ${jornadaActualNum === i ? 'active' : ''}">${i}° Fecha</div>`; c.innerHTML = h; }
-        function irACategoria(id, btn) { const el = document.getElementById(id); if(el) el.scrollIntoView({ behavior: 'smooth' }); }
-        function previewLogoClub(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { logoClubTemporal = ev.target.result; document.getElementById('club-logo-preview').src = ev.target.result; document.getElementById('club-logo-preview').classList.remove('hidden'); document.getElementById('club-placeholder-logo').classList.add('hidden'); }; r.readAsDataURL(f); } }
-        function previewFoto(e, t) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { if(t=='perfil') { fotoTemporal = ev.target.result; document.getElementById('image-preview').src = ev.target.result; document.getElementById('image-preview').classList.remove('hidden'); } else { fotoDniTemporal = ev.target.result; document.getElementById('dni-image-preview').src = ev.target.result; document.getElementById('dni-image-preview').classList.remove('hidden'); } }; r.readAsDataURL(f); } }
-        function resetFormLogo() { logoClubTemporal=null; document.getElementById('club-logo-preview').classList.add('hidden'); document.getElementById('club-placeholder-logo').classList.remove('hidden'); }
-        function resetFormFoto() { fotoTemporal=null; fotoDniTemporal=null; document.getElementById('image-preview').classList.add('hidden'); document.getElementById('dni-image-preview').classList.add('hidden'); }
-        function calcularCategoria(f) { const y = new Date(f + "T00:00:00").getFullYear(); if(y==2011||y==2012) return "2011/12"; if(y==2013||y==2014) return "2013/14"; if(y==2015||y==2016) return "2015/16"; if(y==2017||y==2018) return "2017/18"; if(y==2019||y==2020) return "2019/20"; return "---"; }
-        function actualizarTodo() { renderTablasStandings(); renderEquiposList(); renderListaFichajes(); renderPestañasFechas(); renderJornadasAgrupadas(); actualizarSelectsEquipos(); }
-        window.onload = () => { actualizarTodo(); };
-    </script>
-</body></html>
+  // --- FUNCIÓN PARA BORRAR CLUB ---
+  window.borrarClubAction = function(id) {
+    if(!confirm("¿Estás seguro de eliminar este club de la base de datos?")) return;
+    onValue(ref(db, 'liga/equipos'), (s) => {
+      s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); });
+    }, {onlyOnce: true});
+  };
+</script>
