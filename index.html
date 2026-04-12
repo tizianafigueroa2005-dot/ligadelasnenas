@@ -1,84 +1,312 @@
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-  import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Liga de las Nenas - Oficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* MANTENIENDO TU ESTILO ORIGINAL */
+        body { font-family: 'Roboto', sans-serif; background: linear-gradient(to bottom, #ff7bc1, #ffb3d9, #ffffff); min-height: 100vh; margin: 0; scroll-behavior: smooth; }
+        .oswald { font-family: 'Oswald', sans-serif; }
+        .header-text { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .tab-btn { background-color: rgba(255, 255, 255, 0.3); color: #4a3b4d; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
+        .tab-btn.active { background: linear-gradient(to bottom, #e6338a, #c2185b); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-color: transparent; }
+        .view-section, .sub-view { display: none; }
+        .view-section.active, .sub-view.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        #modal-container, #dni-modal-container, #confirm-modal, #match-detail-modal, #create-match-modal, #auth-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
+        .id-card { width: 330px; height: 210px; background: white; border-radius: 18px; position: relative; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.8); margin: auto; }
+        .id-card-header { background: linear-gradient(to right, #e6338a, #c2185b); height: 55px; padding: 10px 15px; color: white; display: flex; align-items: center; gap: 10px; }
+        .id-card-body { display: flex; padding: 15px; gap: 15px; position: relative; }
+        .id-photo { width: 90px; height: 110px; background: #f1f5f9; border: 3px solid #ff7bc1; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 10; }
+        .id-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .id-details { flex: 1; z-index: 10; }
+        .id-label { font-size: 8px; color: #94a3b8; text-transform: uppercase; font-weight: 900; margin-bottom: -1px; }
+        .id-value { font-size: 13px; color: #1e293b; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
+        .id-footer { position: absolute; bottom: 0; width: 100%; height: 28px; background: #2d1b2e; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #ffb3d9; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; }
+        .watermark { position: absolute; right: 10px; bottom: 40px; width: 80px; height: 80px; opacity: 0.1; pointer-events: none; }
+        .zona-badge { padding: 2px 8px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; }
+        .zona-a { background: #e0f2fe; color: #0369a1; }
+        .zona-b { background: #fef3c7; color: #92400e; }
+        body:not(.admin-mode) .admin-only { display: none !important; }
+        #sync-indicator { position: fixed; bottom: 1rem; left: 1rem; font-size: 10px; font-weight: bold; text-transform: uppercase; color: #4a3b4d; background: rgba(255, 255, 255, 0.8); padding: 4px 10px; border-radius: 999px; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px); z-index: 1000; }
+    </style>
+</head>
+<body class="pb-20">
+    <div id="sync-indicator">
+        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+        Cloud Sync Active (RTDB)
+    </div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",
-    authDomain: "ldln2026.firebaseapp.com",
-    databaseURL: "https://ldln2026-default-rtdb.firebaseio.com",
-    projectId: "ldln2026",
-    storageBucket: "ldln2026.firebasestorage.app",
-    messagingSenderId: "1071996748084",
-    appId: "1:1071996748084:web:65912e20c1af6e9df72561"
-  };
+    <div id="auth-modal" onclick="closeAuthModal()">
+        <div class="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl text-center" onclick="event.stopPropagation()">
+            <h3 class="oswald text-xl font-bold uppercase text-gray-800 mb-4">Acceso Administrador</h3>
+            <input type="password" id="admin-pwd" placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 font-bold text-center outline-none mb-4">
+            <button onclick="loginAdmin()" class="w-full py-3 bg-pink-600 text-white font-black rounded-xl uppercase text-[10px]">Ingresar</button>
+        </div>
+    </div>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    <div id="modal-container" onclick="cerrarCarnet()">
+        <div class="p-2 relative" onclick="event.stopPropagation()">
+            <button onclick="cerrarCarnet()" class="absolute -top-12 right-0 text-white font-bold text-4xl">×</button>
+            <div id="id-card-render"></div>
+            <button onclick="cerrarCarnet()" class="w-full mt-6 py-4 bg-white text-pink-600 font-black rounded-2xl uppercase text-sm shadow-2xl">Cerrar</button>
+        </div>
+    </div>
 
-  // --- SINCRONIZACIÓN EN TIEMPO REAL ---
-  onValue(ref(db, 'liga'), (snapshot) => {
-    const data = snapshot.val() || {};
-    window.equipos = data.equipos ? Object.values(data.equipos) : [];
-    window.jugadoras = data.jugadoras ? Object.values(data.jugadoras) : [];
-    window.partidos = data.partidos ? Object.values(data.partidos) : [];
-    
-    // Actualiza los selectores y tablas de tu código original
-    if (typeof window.actualizarTodo === "function") window.actualizarTodo();
-  });
+    <header id="inicio" class="pt-10 pb-6 px-6 text-center relative text-white">
+        <div class="absolute top-6 right-6 flex gap-2 z-50">
+            <button onclick="toggleAuthModal()" class="text-white/80 hover:text-white p-2 rounded-full bg-black/10">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path id="auth-icon-path" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </button>
+        </div>
+        <div class="flex justify-between items-center max-w-md mx-auto">
+            <div class="w-16 h-16 bg-white rounded-full p-1 shadow-lg flex items-center justify-center overflow-hidden"><img id="header-logo-l" src="" class="logo-liga-dinamico"></div>
+            <h1 class="oswald text-4xl font-black uppercase header-text text-center mx-2 tracking-tighter">LA LIGA DE LAS<br>NENAS</h1>
+            <div class="w-16 h-16 bg-white rounded-full p-1 shadow-lg flex items-center justify-center overflow-hidden"><img id="header-logo-r" src="" class="logo-liga-dinamico"></div>
+        </div>
+    </header>
 
-  // --- FUNCIÓN PARA AGREGAR EQUIPOS ---
-  window.agregarEquipo = async function() {
-    const n = document.getElementById('nombreEquipo').value.trim();
-    const z = document.getElementById('zonaEquipo')?.value || "A";
-    if (!n) return alert("Escribe el nombre del club");
-    
-    const newRef = push(ref(db, 'liga/equipos'));
-    await set(newRef, { 
-        id: Date.now(), 
-        nombre: n.toUpperCase(), 
-        zona: z,
-        logo: "" // Queda vacío por ahora
-    });
-    
-    document.getElementById('nombreEquipo').value = "";
-    alert("¡Equipo guardado en la nube!");
-  };
+    <main class="max-w-md mx-auto px-4 mt-4 text-center">
+        <div class="flex gap-2 mb-8 leading-none w-full">
+            <button onclick="switchView('posiciones', this)" class="tab-btn active rounded-2xl py-4 flex-1 text-[9px] font-bold uppercase">Tablas</button>
+            <button onclick="switchView('equipos', this)" class="tab-btn rounded-2xl py-4 flex-1 text-[9px] font-bold uppercase">Equipos</button>
+            <button onclick="switchView('fichar', this)" class="tab-btn rounded-2xl py-4 flex-1 text-[9px] font-bold uppercase admin-only">Fichar</button>
+        </div>
 
-  // --- FUNCIÓN PARA FICHAR JUGADORAS/DELEGADOS ---
-  window.ficharPersona = async function() {
-    const ape = document.getElementById('apellidoJugadora').value.trim();
-    const nom = document.getElementById('nombreJugadora').value.trim();
-    const d = document.getElementById('dniJugadora').value.trim();
-    const clId = document.getElementById('clubJugadora').value;
-    
-    if (!ape || !nom || !clId || !d) return alert("Faltan datos");
+        <section id="vista-posiciones" class="view-section active">
+            <div id="tablas-dinamicas" class="space-y-12 text-left"></div>
+        </section>
 
-    const newId = Date.now();
-    let p = { 
-        id: newId, 
-        nombre: `${ape} ${nom}`.toUpperCase(), 
-        dni: d, 
-        clubId: parseInt(clId), 
-        tipo: window.tipoFichajeActual || "jugadora",
-        foto: "" 
-    };
-    
-    const fn = document.getElementById('fechaNacimientoJugadora')?.value;
-    if(fn && typeof window.calcularCategoria === "function") {
-      p.fechaNac = fn;
-      p.cat = window.calcularCategoria(fn);
-    }
+        <section id="vista-equipos" class="view-section">
+            <div id="subvista-equipos-lista" class="sub-view active">
+                <div class="bg-white/40 p-6 rounded-3xl mb-10 admin-only">
+                    <input type="text" id="nombreEquipo" placeholder="NOMBRE DEL CLUB" class="w-full px-4 py-4 rounded-xl font-black text-center uppercase mb-4 shadow-inner">
+                    <select id="zonaEquipo" class="w-full px-4 py-3 rounded-xl bg-white font-bold text-gray-700 outline-none uppercase text-xs">
+                        <option value="A">ZONA A</option>
+                        <option value="B">ZONA B</option>
+                    </select>
+                    <button onclick="agregarEquipo()" class="w-full py-4 mt-4 bg-pink-600 text-white font-black uppercase rounded-xl">Agregar Equipo</button>
+                </div>
+                <div id="lista-clubes-botones" class="grid grid-cols-1 gap-4 text-left"></div>
+            </div>
+        </section>
 
-    await set(push(ref(db, 'liga/jugadoras')), p);
-    alert("¡Fichaje realizado!");
-    if (typeof window.resetFormFoto === "function") window.resetFormFoto();
-  };
+        <section id="vista-fichar" class="view-section">
+            <div class="bg-white/40 p-6 rounded-3xl text-center">
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <input type="text" id="apellidoJugadora" placeholder="APELLIDO" class="w-full px-4 py-3 rounded-xl font-bold uppercase">
+                    <input type="text" id="nombreJugadora" placeholder="NOMBRE" class="w-full px-4 py-3 rounded-xl font-bold uppercase">
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <input type="number" id="dniJugadora" placeholder="DNI" class="w-full px-4 py-3 rounded-xl font-bold">
+                    <input type="date" id="fechaNacimientoJugadora" class="w-full px-2 py-3 rounded-xl font-bold text-xs">
+                </div>
+                <select id="clubJugadora" class="w-full px-3 py-3 rounded-xl font-bold text-xs mb-4"></select>
+                <button onclick="ficharPersona()" class="w-full py-4 bg-pink-600 text-white font-black uppercase rounded-2xl">Fichar Persona</button>
+            </div>
+            <div id="lista-fichajes" class="mt-8"></div>
+        </section>
+    </main>
 
-  // --- FUNCIÓN PARA BORRAR CLUB ---
-  window.borrarClubAction = function(id) {
-    if(!confirm("¿Estás seguro de eliminar este club de la base de datos?")) return;
-    onValue(ref(db, 'liga/equipos'), (s) => {
-      s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); });
-    }, {onlyOnce: true});
-  };
-</script>
+    <div id="status-message" class="fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] hidden text-white"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+        // CONFIGURACIÓN PROPORCIONADA
+        const firebaseConfig = {
+            apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",
+            authDomain: "ldln2026.firebaseapp.com",
+            databaseURL: "https://ldln2026-default-rtdb.firebaseio.com",
+            projectId: "ldln2026",
+            storageBucket: "ldln2026.firebasestorage.app",
+            messagingSenderId: "1071996748084",
+            appId: "1:1071996748084:web:65912e20c1af6e9df72561"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // VARIABLES GLOBALES
+        window.isAdmin = false;
+        window.tipoFichajeActual = "jugadora";
+        const logoLigaGlobal = "https://cdn-icons-png.flaticon.com/512/3306/3306567.png";
+        const categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
+
+        // --- SINCRONIZACIÓN EN TIEMPO REAL ---
+        onValue(ref(db, 'liga'), (snapshot) => {
+            const data = snapshot.val() || {};
+            window.equipos = data.equipos ? Object.entries(data.equipos).map(([key, val]) => ({...val, key})) : [];
+            window.jugadoras = data.jugadoras ? Object.entries(data.jugadoras).map(([key, val]) => ({...val, key})) : [];
+            window.partidos = data.partidos ? Object.entries(data.partidos).map(([key, val]) => ({...val, key})) : [];
+            
+            window.actualizarTodo();
+        });
+
+        // --- FUNCIÓN PARA AGREGAR EQUIPOS ---
+        window.agregarEquipo = async function() {
+            const n = document.getElementById('nombreEquipo').value.trim();
+            const z = document.getElementById('zonaEquipo')?.value || "A";
+            if (!n) return showStatus("Escribe el nombre del club", true);
+            
+            const newRef = push(ref(db, 'liga/equipos'));
+            await set(newRef, { 
+                id: Date.now(), 
+                nombre: n.toUpperCase(), 
+                zona: z,
+                logo: "" 
+            });
+            
+            document.getElementById('nombreEquipo').value = "";
+            showStatus("¡Equipo guardado!");
+        };
+
+        // --- FUNCIÓN PARA FICHAR JUGADORAS ---
+        window.ficharPersona = async function() {
+            const ape = document.getElementById('apellidoJugadora').value.trim();
+            const nom = document.getElementById('nombreJugadora').value.trim();
+            const d = document.getElementById('dniJugadora').value.trim();
+            const clId = document.getElementById('clubJugadora').value;
+            
+            if (!ape || !nom || !clId || !d) return showStatus("Faltan datos", true);
+
+            const newId = Date.now();
+            let p = { 
+                id: newId, 
+                nombre: `${ape} ${nom}`.toUpperCase(), 
+                dni: d, 
+                clubId: parseInt(clId), 
+                tipo: window.tipoFichajeActual || "jugadora",
+                foto: "" 
+            };
+            
+            const fn = document.getElementById('fechaNacimientoJugadora')?.value;
+            if(fn) {
+                p.fechaNac = fn;
+                p.cat = window.calcularCategoria(fn);
+            }
+
+            await set(push(ref(db, 'liga/jugadoras')), p);
+            showStatus("¡Fichaje realizado!");
+            document.getElementById('apellidoJugadora').value = "";
+            document.getElementById('nombreJugadora').value = "";
+            document.getElementById('dniJugadora').value = "";
+        };
+
+        // --- BORRAR CLUB ---
+        window.borrarClubAction = function(id) {
+            if(!confirm("¿Eliminar este club?")) return;
+            onValue(ref(db, 'liga/equipos'), (s) => {
+                s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); });
+            }, {onlyOnce: true});
+        };
+
+        // --- UTILIDADES DE INTERFAZ ---
+        window.actualizarTodo = () => {
+            renderEquiposList();
+            actualizarSelectsEquipos();
+            renderListaFichajes();
+            // Aquí puedes llamar a renderTablasStandings si tienes la lógica de puntos
+        };
+
+        window.renderEquiposList = () => {
+            const container = document.getElementById('lista-clubes-botones');
+            if (!container) return;
+            container.innerHTML = window.equipos.map(e => `
+                <div class="flex gap-2 mb-3 bg-white p-4 rounded-2xl shadow-md justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black oswald uppercase text-xl">${e.nombre}</span>
+                        <span class="zona-badge ${e.zona === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${e.zona}</span>
+                    </div>
+                    ${window.isAdmin ? `<button onclick="borrarClubAction('${e.id}')" class="bg-red-500 text-white p-2 rounded-lg">🗑️</button>` : ''}
+                </div>
+            `).join('');
+        };
+
+        window.actualizarSelectsEquipos = () => {
+            const select = document.getElementById('clubJugadora');
+            if (select) {
+                select.innerHTML = window.equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+            }
+        };
+
+        window.renderListaFichajes = () => {
+            const container = document.getElementById('lista-fichajes');
+            if (!container) return;
+            container.innerHTML = window.jugadoras.map(j => `
+                <div class="bg-white p-3 rounded-xl mb-2 flex justify-between items-center">
+                    <div class="text-left">
+                        <div class="font-bold text-xs">${j.nombre}</div>
+                        <div class="text-[10px] text-pink-600 font-bold">${j.cat || 'DELEGADO'} - DNI ${j.dni}</div>
+                    </div>
+                    <button onclick="verCarnet('${j.id}')" class="text-xl">🪪</button>
+                </div>
+            `).join('');
+        };
+
+        window.calcularCategoria = (f) => {
+            const a = new Date(f).getFullYear();
+            if (a <= 2012 && a >= 2011) return "2011/12";
+            if (a <= 2014 && a >= 2013) return "2013/14";
+            if (a <= 2016 && a >= 2015) return "2015/16";
+            if (a <= 2018 && a >= 2017) return "2017/18";
+            if (a <= 2020 && a >= 2019) return "2019/20";
+            return "---";
+        };
+
+        window.showStatus = (msg, isError = false) => {
+            const el = document.getElementById('status-message');
+            el.innerText = msg; el.style.backgroundColor = isError ? '#ef4444' : '#10b981';
+            el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 3000);
+        };
+
+        window.switchView = (v, btn) => {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('vista-' + v).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+        };
+
+        window.toggleAuthModal = () => {
+            if (window.isAdmin) {
+                window.isAdmin = false; document.body.classList.remove('admin-mode');
+                window.actualizarTodo();
+            } else { document.getElementById('auth-modal').style.display = 'flex'; }
+        };
+
+        window.loginAdmin = () => {
+            if (document.getElementById('admin-pwd').value === "ldln2026") {
+                window.isAdmin = true; document.body.classList.add('admin-mode');
+                document.getElementById('auth-modal').style.display = 'none';
+                window.actualizarTodo();
+            } else { alert("Error"); }
+        };
+
+        window.verCarnet = (id) => {
+            const j = window.jugadoras.find(x => x.id == id);
+            const club = window.equipos.find(e => e.id == j.clubId);
+            document.getElementById('id-card-render').innerHTML = `
+                <div class="id-card">
+                    <div class="id-card-header"><span class="oswald font-black text-sm uppercase">LA LIGA DE LAS NENAS</span></div>
+                    <div class="id-card-body">
+                        <div class="id-photo"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"></div>
+                        <div class="id-details">
+                            <div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div>
+                            <div class="id-label">Club</div><div class="id-value text-pink-600">${club ? club.nombre : '---'}</div>
+                            <div class="id-label">DNI</div><div class="id-value">${j.dni}</div>
+                            <div class="id-label">Cat</div><div class="id-value">${j.cat || 'DELEGADO'}</div>
+                        </div>
+                    </div>
+                </div>`;
+            document.getElementById('modal-container').style.display = 'flex';
+        };
+
+        window.cerrarCarnet = () => document.getElementById('modal-container').style.display = 'none';
+        window.closeAuthModal = () => document.getElementById('auth-modal').style.display = 'none';
+    </script>
+</body>
+</html>
