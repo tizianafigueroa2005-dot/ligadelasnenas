@@ -15,361 +15,74 @@
             scroll-behavior: smooth;
         }
         
-        .oswald { 
-            font-family: 'Oswald', sans-serif; 
-        }
+        .oswald { font-family: 'Oswald', sans-serif; }
+        .header-text { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
         
-        .header-text { 
-            color: white; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2); 
-        }
+        .tab-btn { background-color: rgba(255, 255, 255, 0.3); color: #4a3b4d; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
+        .tab-btn.active { background: linear-gradient(to bottom, #e6338a, #c2185b); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-color: transparent; }
         
-        .tab-btn {
-            background-color: rgba(255, 255, 255, 0.3);
-            color: #4a3b4d;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .tab-btn.active {
-            background: linear-gradient(to bottom, #e6338a, #c2185b);
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            border-color: transparent;
-        }
-        
-        .category-tab {
-            border-bottom: 3px solid transparent;
-            color: #94a3b8;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 12px;
-            padding: 10px 0;
-            transition: all 0.3s;
-        }
-        
-        .category-tab.active {
-            border-bottom: 3px solid #e6338a;
-            color: #e6338a;
+        .category-tab { border-bottom: 3px solid transparent; color: #94a3b8; font-weight: 900; text-transform: uppercase; font-size: 12px; padding: 10px 0; transition: all 0.3s; }
+        .category-tab.active { border-bottom: 3px solid #e6338a; color: #e6338a; }
+
+        .view-section, .sub-view { display: none; }
+        .view-section.active, .sub-view.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        #modal-container, #dni-modal-container, #confirm-modal, #match-detail-modal, #create-match-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px;
         }
 
-        .view-section, .sub-view { 
-            display: none; 
-        }
-        
-        .view-section.active, .sub-view.active {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        .id-card { width: 330px; height: 210px; background: white; border-radius: 18px; position: relative; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.8); margin: auto; }
+        .id-card-header { background: linear-gradient(to right, #e6338a, #c2185b); height: 55px; padding: 10px 15px; color: white; display: flex; align-items: center; gap: 10px; }
+        .id-card-body { display: flex; padding: 15px; gap: 15px; position: relative; }
+        .id-photo { width: 90px; height: 110px; background: #f1f5f9; border: 3px solid #ff7bc1; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 10; }
+        .id-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .id-details { flex: 1; z-index: 10; }
+        .id-label { font-size: 8px; color: #94a3b8; text-transform: uppercase; font-weight: 900; margin-bottom: -1px; }
+        .id-value { font-size: 13px; color: #1e293b; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
+        .id-footer { position: absolute; bottom: 0; width: 100%; height: 28px; background: #2d1b2e; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #ffb3d9; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; }
+        .watermark { position: absolute; right: 10px; bottom: 40px; width: 80px; height: 80px; opacity: 0.1; pointer-events: none; }
 
-        #modal-container, #dni-modal-container, #confirm-modal, #match-detail-modal, #create-match-modal, #auth-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            padding: 20px;
-        }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #e6338a; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .id-card {
-            width: 330px; 
-            height: 210px;
-            background: white; 
-            border-radius: 18px;
-            position: relative; 
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            border: 2px solid rgba(255,255,255,0.8);
-            margin: auto;
-        }
+        #btnVolverArriba { display: none; position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 90; background: linear-gradient(to bottom, #ff4db8, #d63384); color: white; padding: 0.75rem; border-radius: 9999px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); border: 2px solid white; transition: all 0.3s ease; }
         
-        .id-card-header {
-            background: linear-gradient(to right, #e6338a, #c2185b);
-            height: 55px; 
-            padding: 10px 15px; 
-            color: white;
-            display: flex; 
-            align-items: center; 
-            gap: 10px;
-        }
-        
-        .id-card-body { 
-            display: flex; 
-            padding: 15px; 
-            gap: 15px; 
-            position: relative; 
-        }
-        
-        .id-photo {
-            width: 90px; 
-            height: 110px;
-            background: #f1f5f9; 
-            border: 3px solid #ff7bc1; 
-            border-radius: 10px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            overflow: hidden; 
-            z-index: 10;
-        }
-        
-        .id-photo img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-        
-        .id-details { 
-            flex: 1; 
-            z-index: 10; 
-        }
-        
-        .id-label { 
-            font-size: 8px; 
-            color: #94a3b8; 
-            text-transform: uppercase; 
-            font-weight: 900; 
-            margin-bottom: -1px; 
-        }
-        
-        .id-value { 
-            font-size: 13px; 
-            color: #1e293b; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            margin-bottom: 5px; 
-            line-height: 1.1; 
-        }
-        
-        .id-footer {
-            position: absolute; 
-            bottom: 0; 
-            width: 100%; 
-            height: 28px;
-            background: #2d1b2e; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            font-size: 10px; 
-            color: #ffb3d9; 
-            font-weight: bold; 
-            letter-spacing: 1.5px; 
-            text-transform: uppercase;
-        }
-        
-        .watermark { 
-            position: absolute; 
-            right: 10px; 
-            bottom: 40px; 
-            width: 80px; 
-            height: 80px; 
-            opacity: 0.1; 
-            pointer-events: none; 
-        }
-
-        .loader {
-            border: 3px solid #f3f3f3; 
-            border-top: 3px solid #e6338a; 
-            border-radius: 50%;
-            width: 18px; 
-            height: 18px; 
-            animation: spin 1s linear infinite; 
-            display: inline-block;
-        }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        #btnVolverArriba {
-            display: none; 
-            position: fixed; 
-            bottom: 1.5rem; 
-            right: 1.5rem; 
-            z-index: 90;
-            background: linear-gradient(to bottom, #ff4db8, #d63384); 
-            color: white;
-            padding: 0.75rem; 
-            border-radius: 9999px; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            border: 2px solid white; 
-            transition: all 0.3s ease;
-        }
-        
-        .category-btn-active { 
-            background-color: #ff4db8; 
-            color: white; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-        }
-        
-        .category-btn-inactive { 
-            background-color: rgba(255, 255, 255, 0.3); 
-            color: #4a3b4d; 
-        }
-        
+        .category-btn-active { background-color: #ff4db8; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .category-btn-inactive { background-color: rgba(255, 255, 255, 0.3); color: #4a3b4d; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .date-tab {
-            white-space: nowrap; 
-            padding: 8px 16px; 
-            border-radius: 12px;
-            font-weight: 700; 
-            color: #4a3b4d; 
-            background: white;
-            border: 2px solid transparent; 
-            transition: all 0.2s ease; 
-            cursor: pointer;
-        }
-        
-        .date-tab.active { 
-            background: white; 
-            border-color: #ff4db8; 
-            color: #ff4db8; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-        }
-        
-        .new-date-btn { 
-            background: #e2e8f0; 
-            color: #64748b; 
-        }
+        .date-tab { white-space: nowrap; padding: 8px 16px; border-radius: 12px; font-weight: 700; color: #4a3b4d; background: white; border: 2px solid transparent; transition: all 0.2s ease; cursor: pointer; }
+        .date-tab.active { background: white; border-color: #ff4db8; color: #ff4db8; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .new-date-btn { background: #e2e8f0; color: #64748b; }
 
-        .table-card { 
-            background: white; 
-            border-radius: 2rem; 
-            overflow: hidden; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            border: 1px solid rgba(255,255,255,0.3); 
-        }
-        
-        .table-header-cell { 
-            padding: 12px 6px; 
-            font-size: 9px; 
-            text-transform: uppercase; 
-            font-weight: 900; 
-            color: #94a3b8; 
-            letter-spacing: 0.05em; 
-        }
-        
-        .table-row { 
-            border-bottom: 1px solid #f1f5f9; 
-            transition: background 0.2s; 
-        }
-        
-        .table-row:last-child { 
-            border-bottom: none; 
-        }
-        
-        .table-row:nth-child(even) { 
-            background-color: #fafafa; 
-        }
-        
-        .table-cell { 
-            padding: 14px 6px; 
-            font-size: 11px; 
-            font-weight: 700; 
-            color: #334155; 
-        }
-        
-        .pts-cell { 
-            background-color: #fff1f8; 
-            color: #e6338a; 
-            font-weight: 900; 
-            font-size: 13px; 
-        }
+        .table-card { background: white; border-radius: 2rem; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }
+        .table-header-cell { padding: 12px 6px; font-size: 9px; text-transform: uppercase; font-weight: 900; color: #94a3b8; letter-spacing: 0.05em; }
+        .table-row { border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
+        .table-row:last-child { border-bottom: none; }
+        .table-row:nth-child(even) { background-color: #fafafa; }
+        .table-cell { padding: 14px 6px; font-size: 11px; font-weight: 700; color: #334155; }
+        .pts-cell { background-color: #fff1f8; color: #e6338a; font-weight: 900; font-size: 13px; }
 
-        .fichaje-type-btn {
-            flex: 1; 
-            padding: 10px; 
-            font-size: 10px; 
-            font-weight: 900; 
-            text-transform: uppercase;
-            border-radius: 12px; 
-            transition: all 0.3s;
-        }
-        
-        .fichaje-type-btn.active { 
-            background: #4a3b4d; 
-            color: white; 
-        }
-        
-        .fichaje-type-btn.inactive { 
-            background: #f1f5f9; 
-            color: #94a3b8; 
-        }
+        .fichaje-type-btn { flex: 1; padding: 10px; font-size: 10px; font-weight: 900; text-transform: uppercase; border-radius: 12px; transition: all 0.3s; }
+        .fichaje-type-btn.active { background: #4a3b4d; color: white; }
+        .fichaje-type-btn.inactive { background: #f1f5f9; color: #94a3b8; }
 
-        .zona-badge {
-            padding: 2px 8px; 
-            border-radius: 6px; 
-            font-size: 9px; 
-            font-weight: 900; 
-            text-transform: uppercase;
-        }
-        
+        .zona-badge { padding: 2px 8px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; }
         .zona-a { background: #e0f2fe; color: #0369a1; }
         .zona-b { background: #fef3c7; color: #92400e; }
 
-        .zona-selector-btn {
-            padding: 10px 24px; 
-            font-weight: 900; 
-            font-size: 11px; 
-            text-transform: uppercase;
-            border-radius: 9999px; 
-            transition: all 0.3s;
-        }
-        
-        .zona-selector-btn.active { 
-            background: #e6338a; 
-            color: white; 
-            box-shadow: 0 4px 10px rgba(230, 51, 138, 0.3); 
-        }
-        
-        .zona-selector-btn.inactive { 
-            background: rgba(255, 255, 255, 0.5); 
-            color: #4a3b4d; 
-        }
+        .zona-selector-btn { padding: 10px 24px; font-weight: 900; font-size: 11px; text-transform: uppercase; border-radius: 9999px; transition: all 0.3s; }
+        .zona-selector-btn.active { background: #e6338a; color: white; box-shadow: 0 4px 10px rgba(230, 51, 138, 0.3); }
+        .zona-selector-btn.inactive { background: rgba(255, 255, 255, 0.5); color: #4a3b4d; }
 
-        body:not(.admin-mode) .admin-only {
-            display: none !important;
-        }
-
-        /* Indicador de Sincronización */
-        #sync-indicator {
-            position: fixed;
-            bottom: 1rem;
-            left: 1rem;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #4a3b4d;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 4px 10px;
-            border-radius: 999px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-        }
+        body:not(.admin-mode) .admin-only { display: none !important; }
     </style>
 </head>
 <body class="pb-20">
-    <div id="sync-indicator">
-        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        Cloud Sync Active
-    </div>
-
     <!-- Modal Login -->
-    <div id="auth-modal" onclick="closeAuthModal()">
+    <div id="auth-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px;" onclick="closeAuthModal()">
         <div class="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl text-center" onclick="event.stopPropagation()">
             <h3 class="oswald text-xl font-bold uppercase text-gray-800 mb-4">Acceso Administrador</h3>
             <input type="password" id="admin-pwd" placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 font-bold text-center text-gray-700 outline-none focus:ring-2 focus:ring-pink-300 mb-4">
@@ -404,7 +117,7 @@
                 </div>                
                 <div class="flex gap-2 pt-4">                    
                     <button onclick="cerrarNuevoPartido()" class="flex-1 py-4 bg-gray-100 text-gray-400 font-black rounded-2xl uppercase text-[10px] tracking-widest transition-all">Cerrar</button>                    
-                    <button id="btn-confirmar-cruce" onclick="agregarCruceAlFixture()" class="flex-1 py-4 bg-pink-600 text-white font-black rounded-2xl uppercase text-[10px] tracking-widest shadow-lg">Confirmar</button>                
+                    <button onclick="agregarCruceAlFixture()" class="flex-1 py-4 bg-pink-600 text-white font-black rounded-2xl uppercase text-[10px] tracking-widest shadow-lg">Confirmar</button>                
                 </div>            
             </div>        
         </div>    
@@ -431,7 +144,7 @@
                 </div>            
             </div>            
             <div id="contenedor-inputs-categorias" class="space-y-4"></div>            
-            <button id="btn-save-results" onclick="guardarResultadosPartidoActual()" class="w-full mt-8 py-4 bg-gradient-to-r from-pink-600 to-pink-800 text-white font-black uppercase rounded-2xl shadow-xl active:scale-95 text-xs tracking-widest admin-only">Guardar Resultados</button>        
+            <button onclick="guardarResultadosPartidoActual()" class="w-full mt-8 py-4 bg-gradient-to-r from-pink-600 to-pink-800 text-white font-black uppercase rounded-2xl shadow-xl active:scale-95 text-xs tracking-widest admin-only">Guardar Resultados</button>        
         </div>    
     </div>
 
@@ -458,30 +171,15 @@
     <div id="status-message" class="fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] hidden text-white transition-all"></div>
 
     <header id="inicio" class="pt-10 pb-6 px-6 text-center relative text-white">        
-        <div class="absolute top-6 right-6 flex gap-2 z-50">
-            <!-- Botón Config Logo Liga (Solo Admin) -->
-            <button onclick="document.getElementById('input-logo-liga-global').click()" class="text-white/60 hover:text-white transition-all p-2 rounded-full bg-black/10 hover:bg-black/20 admin-only" title="Subir Logo de la Liga">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-                <input type="file" id="input-logo-liga-global" accept="image/*" class="hidden" onchange="cambiarLogoLiga(event)">
-            </button>
-            <!-- Botón Login -->
-            <button onclick="toggleAuthModal()" class="text-white/80 hover:text-white transition-all p-2 rounded-full bg-black/10 hover:bg-black/20">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path id="auth-icon-path" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-            </button>
-        </div>
-
+        <button onclick="toggleAuthModal()" class="absolute top-6 right-6 text-white/80 hover:text-white transition-all p-2 rounded-full bg-black/10 hover:bg-black/20 z-50">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path id="auth-icon-path" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+        </button>
         <div class="flex justify-between items-center max-w-md mx-auto leading-none">            
-            <div class="w-16 h-16 bg-white rounded-full p-1 shadow-lg border-2 border-pink-300 flex items-center justify-center overflow-hidden">
-                <img id="header-logo-l" src="" alt="Logo Liga" class="w-full h-full object-contain logo-liga-dinamico">
-            </div>
-            
-            <h1 class="oswald text-4xl font-black uppercase leading-none header-text tracking-tighter text-center mx-2">LA LIGA DE LAS<br>NENAS</h1>            
-            
-            <div class="w-16 h-16 bg-white rounded-full p-1 shadow-lg border-2 border-pink-300 flex items-center justify-center overflow-hidden">
-                <img id="header-logo-r" src="" alt="Logo Liga" class="w-full h-full object-contain logo-liga-dinamico">
-            </div>
+            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">            
+            <h1 class="oswald text-4xl font-black uppercase leading-none header-text tracking-tighter text-center">LA LIGA DE LAS<br>NENAS</h1>            
+            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">        
         </div>        
         <div class="h-1.5 bg-black opacity-10 mt-4 mx-auto w-40 rounded-full shadow-inner"></div>    
     </header>
@@ -509,11 +207,13 @@
 
         <!-- Sección POSICIONES -->        
         <section id="vista-posiciones" class="view-section active">            
+            <!-- Selector de Zona -->            
             <div class="flex justify-center gap-2 mb-6 bg-white/20 p-1.5 rounded-full backdrop-blur-sm">                
                 <button onclick="setZonaTablas('A')" id="btn-zona-tables-a" class="zona-selector-btn active">Zona A</button>                
                 <button onclick="setZonaTablas('B')" id="btn-zona-tables-b" class="zona-selector-btn inactive">Zona B</button>            
             </div>
 
+            <!-- Botones de Categorías -->            
             <div class="flex gap-2 mb-8 overflow-x-auto pb-4 no-scrollbar sticky top-2 z-20">                
                 <button onclick="irACategoria('cat-general', this)" class="cat-btn category-btn-active px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">General</button>                
                 <button onclick="irACategoria('cat-201112', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2011/12</button>                
@@ -521,12 +221,13 @@
                 <button onclick="irACategoria('cat-201516', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2015/16</button>                
                 <button onclick="irACategoria('cat-201718', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2017/18</button>                
                 <button onclick="irACategoria('cat-201920', this)" class="cat-btn category-btn-inactive px-5 py-2.5 rounded-xl text-[11px] font-black transition-all uppercase whitespace-nowrap">2019/20</button>            
-            </div>                                        
+            </div>                        
             <div id="tablas-dinamicas" class="space-y-12 text-left"></div>        
         </section>
 
         <!-- Sección FIXTURE -->        
         <section id="vista-fechas" class="view-section leading-none">            
+            <!-- Selector de Zona para Fixture -->
             <div class="flex justify-center gap-2 mb-6 bg-white/20 p-1.5 rounded-full backdrop-blur-sm">                
                 <button onclick="setZonaFixture('A')" id="btn-zona-fixture-a" class="zona-selector-btn active">Zona A</button>                
                 <button onclick="setZonaFixture('B')" id="btn-zona-fixture-b" class="zona-selector-btn inactive">Zona B</button>            
@@ -568,7 +269,7 @@
                             </select>                        
                         </div>                    
                     </div>                    
-                    <button id="btn-agregar-equipo" onclick="agregarEquipo()" class="w-full py-4 bg-gradient-to-r from-[#e6338a] to-[#c2185b] text-white font-black uppercase rounded-xl shadow-md">Agregar Equipo</button>                
+                    <button onclick="agregarEquipo()" class="w-full py-4 bg-gradient-to-r from-[#e6338a] to-[#c2185b] text-white font-black uppercase rounded-xl shadow-md">Agregar Equipo</button>                
                 </div>                
                 <div id="lista-clubes-botones" class="grid grid-cols-1 gap-4 text-left"></div>            
             </div>
@@ -599,8 +300,8 @@
 
         <!-- Sección FICHAR -->        
         <section id="vista-fichar" class="view-section leading-none">            
-            <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e] tracking-tight text-center leading-none">Fichaje Oficial</h2>                                        
-            <div class="bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center admin-only">                                                
+            <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e] tracking-tight text-center leading-none">Fichaje Oficial</h2>                        
+            <div class="bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center admin-only">                                
                 <div class="flex bg-gray-100 p-1 rounded-2xl mb-8 gap-1">                    
                     <button onclick="setTipoFichaje('jugadora')" id="btn-type-jugadora" class="fichaje-type-btn active">Jugadora</button>                    
                     <button onclick="setTipoFichaje('delegado')" id="btn-type-delegado" class="fichaje-type-btn inactive">Delegado</button>                
@@ -642,7 +343,7 @@
                         <label class="block text-[10px] font-black text-pink-700 uppercase mb-1 ml-1 tracking-widest">Elegir Club</label>                        
                         <select id="clubJugadora" class="w-full px-3 py-3 rounded-xl bg-white border-none font-bold text-gray-700 text-xs shadow-sm focus:ring-2 focus:ring-pink-400 outline-none leading-none"></select>                    
                     </div>                    
-                    <button id="btn-confirmar-fichaje" onclick="ficharPersona()" class="w-full py-4 mt-4 bg-pink-600 text-white font-black uppercase rounded-2xl shadow-xl active:scale-95 text-xs tracking-widest leading-none">Fichar Persona</button>                
+                    <button onclick="ficharPersona()" id="btn-confirmar-fichaje" class="w-full py-4 mt-4 bg-pink-600 text-white font-black uppercase rounded-2xl shadow-xl active:scale-95 text-xs tracking-widest leading-none">Fichar Persona</button>                
                 </div>            
             </div>            
             <div id="lista-fichajes" class="space-y-6 text-left leading-none"></div>        
@@ -653,194 +354,92 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, addDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // --- CONFIGURACIÓN PARA VERCEL ---
+        // ¡CUIDADO! Cuando subas esto a Vercel, debes reemplazar los valores de abajo
+        // con los de tu propio proyecto en Firebase Console.
+        const defaultFirebaseConfig = {
+            apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",
+            authDomain: "ldln2026.firebaseapp.com",
+            projectId: "ldln2026",
+            storageBucket: "ldln2026.firebasestorage.app",
+            messagingSenderId: "1071996748084",
+            appId: "1:1071996748084:web:65912e20c1af6e9df72561",
+            measurementId: "G-P4SMXPJ9CB"
+        };
+        
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultFirebaseConfig;
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'liganenas-default';
-        const apiKey = ""; 
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'liga-nenas-app-123';
 
-        let user = null;
-        let isAdmin = false;
-        let identidadesVerificadas = {};        
-        let equipos = [];         
-        let partidos = [];         
-        let jugadoras = [];         
-        let jornadaActualNum = 1;         
-        let totalJornadas = 1;        
-        let logoLigaGlobal = "https://cdn-icons-png.flaticon.com/512/3306/3306567.png";
-        let fotoTemporal = null, fotoDniTemporal = null, logoClubTemporal = null;        
-        let clubActualId = null, categoriaActual = null, partidoEditandoId = null;        
-        let zonaVisibleTablas = "A";         
-        let zonaVisibleFixture = "A";
-        let tipoFichajeActual = "jugadora";        
-        const categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
+        // Variables Globales
+        window.apiKey = "";                 
+        window.isAdmin = false;
+        window.identidadesVerificadas = {};        
+        window.equipos = [];         
+        window.partidos = [];         
+        window.jugadoras = [];         
+        window.jornadaActualNum = 1;         
+        window.totalJornadas = 1;        
+        window.fotoTemporal = null;
+        window.fotoDniTemporal = null;
+        window.logoClubTemporal = null;        
+        window.clubActualId = null;
+        window.categoriaActual = null;
+        window.partidoEditandoId = null;        
+        window.zonaVisibleTablas = "A";         
+        window.zonaVisibleFixture = "A";
+        window.tipoFichajeActual = "jugadora";        
+        window.categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
 
+        // --- INICIALIZAR AUTH Y BASE DE DATOS ---
         const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch(e) {
+                console.warn("Base de datos en espera de configuración en Vercel.", e);
             }
         };
-
         initAuth();
 
-        onAuthStateChanged(auth, (u) => {
-            user = u;
-            if (user) setupListeners();
+        onAuthStateChanged(auth, (user) => {
+            if (!user) return;
+            const publicPath = (col) => collection(db, 'artifacts', appId, 'public', 'data', col);
+            
+            onSnapshot(publicPath('equipos'), (snapshot) => {
+                window.equipos = snapshot.docs.map(d => d.data());
+                window.actualizarTodo();
+            }, (e) => console.error(e));
+
+            onSnapshot(publicPath('jugadoras'), (snapshot) => {
+                window.jugadoras = snapshot.docs.map(d => d.data());
+                window.actualizarTodo();
+            }, (e) => console.error(e));
+
+            onSnapshot(publicPath('partidos'), (snapshot) => {
+                window.partidos = snapshot.docs.map(d => d.data());
+                if (window.partidos.length > 0) {
+                    window.totalJornadas = Math.max(1, Math.max(...window.partidos.map(p => p.jornada)));
+                    if (window.jornadaActualNum > window.totalJornadas) window.jornadaActualNum = window.totalJornadas;
+                } else {
+                    window.totalJornadas = 1;
+                }
+                window.renderPestañasFechas();
+                window.renderJornadasAgrupadas();
+                window.renderTablasStandings();
+            }, (e) => console.error(e));
         });
 
-        const setupListeners = () => {
-            if (!user) return;
-
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    totalJornadas = data.totalJornadas || 1;
-                    if (data.logoLiga) {
-                        logoLigaGlobal = data.logoLiga;
-                        document.querySelectorAll('.logo-liga-dinamico').forEach(img => img.src = logoLigaGlobal);
-                    }
-                } else {
-                    setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), { totalJornadas: 1, logoLiga: logoLigaGlobal });
-                }
-                renderPestañasFechas();
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'equipos'), (snap) => {
-                equipos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                actualizarTodo();
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'partidos'), (snap) => {
-                partidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                actualizarTodo();
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'jugadoras'), (snap) => {
-                jugadoras = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                actualizarTodo();
-            });
-        };
-
-        window.cambiarLogoLiga = async (event) => {
-            if (!isAdmin) return;
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const base64Logo = await compressImage(e.target.result, 400);
-                    try {
-                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), { logoLiga: base64Logo });
-                        showStatus("Logo de la liga actualizado");
-                    } catch (err) { showStatus("Error al actualizar logo", true); }
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.agregarEquipo = async () => {
-            if (!user) return;
-            const n = document.getElementById('nombreEquipo').value.trim();
-            const z = document.getElementById('zonaEquipo').value;
-            if (!n) return;
-            const btn = document.getElementById('btn-agregar-equipo');
-            btn.disabled = true;
-            try {
-                // El logoClubTemporal ya está comprimido desde previewLogoClub
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'equipos'), { 
-                    nombre: n.toUpperCase(), 
-                    logo: logoClubTemporal, 
-                    zona: z 
-                });
-                document.getElementById('nombreEquipo').value = ""; resetFormLogo(); showStatus("¡Equipo agregado!");
-            } finally { btn.disabled = false; }
-        };
-
-        window.borrarClubAction = (id) => {
-            openConfirmModal("Eliminar Club", "¿Borrar este club?", async () => {
-                try {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'equipos', id.toString()));
-                    showStatus("Club eliminado"); mostrarSubvista('subvista-equipos-lista');
-                } catch (e) { showStatus("Error al eliminar", true); }
-            });
-        };
-
-        window.ficharPersona = async () => {
-            if (!user) return;
-            const ape = document.getElementById('apellidoJugadora').value.trim(),
-                  nom = document.getElementById('nombreJugadora').value.trim(),
-                  d = document.getElementById('dniJugadora').value.trim(),
-                  clId = document.getElementById('clubJugadora').value;
-            if (!ape || !nom || !clId || !d) return showStatus("Faltan datos", true);
-            const btn = document.getElementById('btn-confirmar-fichaje');
-            btn.disabled = true;
-            try {
-                let data = { nombre: `${ape} ${nom}`.toUpperCase(), dni: d, clubId: clId, tipo: tipoFichajeActual, foto: fotoTemporal };
-                if (tipoFichajeActual === 'jugadora') {
-                    const fn = document.getElementById('fechaNacimientoJugadora').value;
-                    const cat = calcularCategoria(fn);
-                    if (!cat) throw new Error("Edad fuera de rango");
-                    data.fechaNac = fn; data.cat = cat; data.fotoDni = fotoDniTemporal;
-                }
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'jugadoras'), data);
-                showStatus("Fichaje realizado");
-                document.getElementById('apellidoJugadora').value = ""; document.getElementById('nombreJugadora').value = ""; document.getElementById('dniJugadora').value = "";
-                if (tipoFichajeActual === 'jugadora') document.getElementById('fechaNacimientoJugadora').value = "";
-                resetFormFoto();
-            } catch (err) { showStatus(err.message, true); } finally { btn.disabled = false; }
-        };
-
-        window.borrarJugadoraAction = (id) => {
-            openConfirmModal("Eliminar Persona", "¿Borrar esta ficha?", async () => {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'jugadoras', id.toString()));
-                showStatus("Persona eliminada");
-            });
-        };
-
-        window.agregarCruceAlFixture = async () => {
-            const elL = document.getElementById('equipoL'), elV = document.getElementById('equipoV');
-            if (!elL.value || !elV.value || elL.value === elV.value) return;
-            const btn = document.getElementById('btn-confirmar-cruce'); btn.disabled = true;
-            try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'partidos'), { jornada: jornadaActualNum, lId: elL.value, vId: elV.value, resultados: {} }); cerrarNuevoPartido(); } finally { btn.disabled = false; }
-        };
-
-        window.eliminarCruce = (id) => { openConfirmModal("Eliminar Cruce", "¿Borrar este partido?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', id.toString())); }); };
-
-        window.guardarResultadosPartidoActual = async () => {
-            if (!partidoEditandoId) return;
-            const resInputs = {};
-            categorias.forEach(cat => {
-                const safeCat = cat.replace('/', '-');
-                const gL = document.getElementById(`valL-${safeCat}`).value, gV = document.getElementById(`valV-${safeCat}`).value;
-                const npL = document.getElementById(`npL-${safeCat}`).checked, npV = document.getElementById(`npV-${safeCat}`).checked;
-                if (gL !== "" || gV !== "" || npL || npV) {
-                    resInputs[cat] = { gL: gL !== "" ? parseInt(gL) : 0, gV: gV !== "" ? parseInt(gV) : 0, npL: npL, npV: npV };
-                }
-            });
-            const btn = document.getElementById('btn-save-results'); btn.disabled = true;
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', partidoEditandoId.toString()), { resultados: resInputs }); cerrarDetallePartido(); } finally { btn.disabled = false; }
-        };
-
-        window.agregarNuevaJornada = async () => { totalJornadas++; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), { totalJornadas: totalJornadas }); seleccionarJornada(totalJornadas); };
-
-        window.eliminarJornadaActual = () => {
-            if (totalJornadas <= 1) return showStatus("Mínimo 1 fecha", true);
-            openConfirmModal("Eliminar Fecha", `¿Borrar la fecha ${jornadaActualNum}?`, async () => {
-                const pBorrar = partidos.filter(p => p.jornada == jornadaActualNum);
-                for (const p of pBorrar) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', p.id));
-                const pCorregir = partidos.filter(p => p.jornada > jornadaActualNum);
-                for (const p of pCorregir) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', p.id), { jornada: p.jornada - 1 });
-                totalJornadas--; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), { totalJornadas: totalJornadas });
-                jornadaActualNum = Math.min(jornadaActualNum, totalJornadas);
-            });
-        };
-
-        window.showStatus = (msg, isError = false) => {            
+        // --- FUNCIONES UTILITARIAS EXPUESTAS ---
+        window.showStatus = function(msg, isError = false) {            
             const el = document.getElementById('status-message');            
             if (el) {                
                 el.innerText = msg; el.style.backgroundColor = isError ? '#ef4444' : '#10b981';                
@@ -848,231 +447,476 @@
                 setTimeout(() => { el.classList.add('hidden'); el.style.display = 'none'; }, 3000);            
             }        
         };
-        window.openConfirmModal = (title, message, callback) => { document.getElementById('confirm-title').innerText = title; document.getElementById('confirm-message').innerText = message; document.getElementById('confirm-execute-btn').onclick = () => { callback(); closeConfirmModal(); }; document.getElementById('confirm-modal').style.display = 'flex'; };       
-        window.closeConfirmModal = () => document.getElementById('confirm-modal').style.display = 'none';        
-        window.cerrarCarnet = () => { document.getElementById('modal-container').style.display = 'none'; document.body.style.overflow = 'auto'; };
-        window.cerrarDniModal = () => document.getElementById('dni-modal-container').style.display = 'none';        
-        window.cerrarDetallePartido = () => { document.getElementById('match-detail-modal').style.display = 'none'; document.body.style.overflow = 'auto'; partidoEditandoId = null; };        
-        window.abrirNuevoPartido = () => { actualizarSelectsEquipos(); document.getElementById('create-match-modal').style.display = 'flex'; };        
-        window.cerrarNuevoPartido = () => document.getElementById('create-match-modal').style.display = 'none';        
-        window.abrirEstadisticasFecha = () => showStatus("Estadísticas Fecha " + jornadaActualNum);
 
-        window.toggleAuthModal = () => {
-            if (isAdmin) {
-                isAdmin = false; document.body.classList.remove('admin-mode');
+        window.openConfirmModal = function(title, message, callback) { 
+            document.getElementById('confirm-title').innerText = title; 
+            document.getElementById('confirm-message').innerText = message; 
+            document.getElementById('confirm-execute-btn').onclick = () => { callback(); window.closeConfirmModal(); }; 
+            document.getElementById('confirm-modal').style.display = 'flex'; 
+        };
+        
+        window.closeConfirmModal = () => document.getElementById('confirm-modal').style.display = 'none';
+        window.cerrarCarnet = () => { document.getElementById('modal-container').style.display = 'none'; document.body.style.overflow = 'auto'; };
+        window.cerrarDniModal = () => document.getElementById('dni-modal-container').style.display = 'none';
+        window.cerrarDetallePartido = () => { document.getElementById('match-detail-modal').style.display = 'none'; document.body.style.overflow = 'auto'; window.partidoEditandoId = null; };
+        window.cerrarNuevoPartido = () => document.getElementById('create-match-modal').style.display = 'none';
+        
+        window.abrirNuevoPartido = function() { window.actualizarSelectsEquipos(); document.getElementById('create-match-modal').style.display = 'flex'; };
+        window.abrirEstadisticasFecha = () => window.showStatus("Estadísticas de la Fecha " + window.jornadaActualNum);
+
+        // --- SISTEMA DE AUTENTICACIÓN ---
+        window.toggleAuthModal = function() {
+            if (window.isAdmin) {
+                window.isAdmin = false;
+                document.body.classList.remove('admin-mode');
+                window.showStatus("Sesión cerrada correctamente");
                 document.getElementById('auth-icon-path').setAttribute('d', 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z');
-                if (document.getElementById('vista-fichar').classList.contains('active')) switchView('posiciones', document.querySelector('[onclick*="posiciones"]'));
-                actualizarTodo();
+                if (document.getElementById('vista-fichar').classList.contains('active')) {
+                    window.switchView('posiciones', document.querySelector('[onclick="switchView(\'posiciones\', this)"]'));
+                }
+                window.actualizarTodo();
             } else {
-                document.getElementById('auth-modal').style.display = 'flex'; document.getElementById('admin-pwd').value = ''; document.getElementById('admin-pwd').focus();
+                document.getElementById('auth-modal').style.display = 'flex';
+                document.getElementById('admin-pwd').value = '';
+                document.getElementById('admin-pwd').focus();
             }
         };
 
         window.closeAuthModal = () => document.getElementById('auth-modal').style.display = 'none';
-        window.loginAdmin = () => { if (document.getElementById('admin-pwd').value === "ldln2026") { isAdmin = true; document.body.classList.add('admin-mode'); showStatus("Admin Activo"); closeAuthModal(); document.getElementById('auth-icon-path').setAttribute('d', 'M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z'); actualizarTodo(); } else { showStatus("Error", true); } };
 
-        async function compressImage(base64Str, maxWidth = 300) {            
+        window.loginAdmin = function() {
+            const pwd = document.getElementById('admin-pwd').value;
+            if (pwd === "ldln2026") {
+                window.isAdmin = true;
+                document.body.classList.add('admin-mode');
+                window.showStatus("¡Modo Administrador Activado!");
+                window.closeAuthModal();
+                document.getElementById('auth-icon-path').setAttribute('d', 'M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z');
+                window.actualizarTodo();
+            } else {
+                window.showStatus("Contraseña incorrecta", true);
+            }
+        };
+
+        // --- MANEJO DE IMÁGENES ---
+        window.compressImage = async function(base64Str, maxWidth = 300) {            
             return new Promise((resolve) => {                
                 const img = new Image(); img.src = base64Str;                
                 img.onload = () => {                    
                     const canvas = document.createElement('canvas');                    
-                    let w = img.width, h = img.height;                    
-                    if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }                    
-                    canvas.width = w; canvas.height = h;                    
-                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);                    
-                    resolve(canvas.toDataURL('image/jpeg', 0.7));                
+                    let width = img.width, height = img.height;                    
+                    if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }                    
+                    canvas.width = width; canvas.height = height;                    
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);                    
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));                
                 };            
             });        
-        }
+        };
 
+        window.previewFoto = async function(event, tipo) { 
+            const file = event.target.files[0]; 
+            if (file) { 
+                const reader = new FileReader(); 
+                reader.onload = async (e) => { 
+                    const res = await window.compressImage(e.target.result, 400); 
+                    if (tipo === 'perfil') { 
+                        window.fotoTemporal = res; 
+                        document.getElementById('image-preview').src = res; 
+                        document.getElementById('image-preview').classList.remove('hidden'); 
+                        document.getElementById('placeholder-icon').classList.add('hidden'); 
+                    } else { 
+                        window.fotoDniTemporal = res; 
+                        document.getElementById('dni-image-preview').src = res; 
+                        document.getElementById('dni-image-preview').classList.remove('hidden'); 
+                        document.getElementById('placeholder-dni-icon').classList.add('hidden'); 
+                    } 
+                }; 
+                reader.readAsDataURL(file); 
+            } 
+        };
+
+        window.previewLogoClub = async function(event) { 
+            const file = event.target.files[0]; 
+            if (file) { 
+                const reader = new FileReader(); 
+                reader.onload = async (e) => { 
+                    const res = await window.compressImage(e.target.result, 200); 
+                    window.logoClubTemporal = res; 
+                    document.getElementById('club-logo-preview').src = res; 
+                    document.getElementById('club-logo-preview').classList.remove('hidden'); 
+                    document.getElementById('club-placeholder-logo').classList.add('hidden'); 
+                }; 
+                reader.readAsDataURL(file); 
+            } 
+        };
+
+        window.resetFormFoto = function() { 
+            window.fotoTemporal = null; window.fotoDniTemporal = null; 
+            document.getElementById('image-preview').classList.add('hidden'); 
+            document.getElementById('placeholder-icon').classList.remove('hidden'); 
+            document.getElementById('dni-image-preview').classList.add('hidden'); 
+            document.getElementById('placeholder-dni-icon').classList.remove('hidden'); 
+        };
+
+        window.resetFormLogo = function() { 
+            window.logoClubTemporal = null; 
+            document.getElementById('club-logo-preview').classList.add('hidden'); 
+            document.getElementById('club-placeholder-logo').classList.remove('hidden'); 
+        };
+
+        // --- FETCH CON RETRY (PARA IA) ---
         async function fetchWithRetry(url, options, retries = 5) {
             const delays = [1000, 2000, 4000, 8000, 16000];
             for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(url, options);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     return await response.json();
-                } catch (error) { if (i === retries - 1) throw error; await new Promise(res => setTimeout(res, delays[i])); }
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
             }
         }
 
-        window.ejecutarVerificacionDefinitiva = async () => {            
+        window.ejecutarVerificacionDefinitiva = async function() {            
             const dniVal = document.getElementById('dniJugadora').value;            
             const resB = document.getElementById('ia-result-box');            
-            if (!fotoTemporal || !fotoDniTemporal) return showStatus("Sube fotos", true);            
-            const btn = document.getElementById('btn-verificar-ia'); btn.disabled = true;            
+            
+            if (!window.fotoTemporal || !window.fotoDniTemporal) { window.showStatus("Sube ambas fotos.", true); return; }            
+            const btn = document.getElementById('btn-verificar-ia');            
+            btn.disabled = true; btn.innerHTML = `<span class="loader"></span> Analizando...`;            
+            
             try {                
-                const faceData = await compressImage(fotoTemporal), dniData = await compressImage(fotoDniTemporal);                
                 const prompt = "Compara estas fotos. ¿Es la misma persona? Responde únicamente en JSON: {\"match\": boolean, \"reason\": \"explicación\"}";                
-                const payload = { contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: faceData.split(',')[1] } }, { inlineData: { mimeType: "image/jpeg", data: dniData.split(',')[1] } }] }], generationConfig: { responseMimeType: "application/json" } };                
-                const result = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: 'POST', body: JSON.stringify(payload) });                
-                const data = JSON.parse(result.candidates?.[0]?.content?.parts?.[0]?.text || "{}");                
+                const payload = { contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: window.fotoTemporal.split(',')[1] } }, { inlineData: { mimeType: "image/jpeg", data: window.fotoDniTemporal.split(',')[1] } }] }], generationConfig: { responseMimeType: "application/json" } };                
+                
+                const result = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${window.apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });                
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "{}";                
+                const data = JSON.parse(text);                
                 resB.classList.remove('hidden');                
-                if (data.match) { resB.className = "p-3 rounded-xl mb-4 text-[10px] font-bold bg-green-100 text-green-700 border border-green-200"; resB.innerHTML = `✅ CONFIRMADA: ${data.reason}`; identidadesVerificadas[dniVal] = { match: true }; }
-                else { resB.className = "p-3 rounded-xl mb-4 text-[10px] font-bold bg-red-100 text-red-700 border border-red-200"; resB.innerHTML = `⚠️ ALERTA: ${data.reason}`; identidadesVerificadas[dniVal] = { match: false }; }            
-            } catch (err) { resB.classList.remove('hidden'); resB.innerHTML = "❌ Error IA."; } finally { btn.disabled = false; }        
+                
+                if (data.match) { 
+                    resB.className = "p-3 rounded-xl mb-4 text-[10px] font-bold bg-green-100 text-green-700 border border-green-200"; 
+                    resB.innerHTML = `✅ CONFIRMADA: ${data.reason}`; 
+                    window.identidadesVerificadas[dniVal] = { match: true }; 
+                } else { 
+                    resB.className = "p-3 rounded-xl mb-4 text-[10px] font-bold bg-red-100 text-red-700 border border-red-200"; 
+                    resB.innerHTML = `⚠️ ALERTA: ${data.reason}`; 
+                    window.identidadesVerificadas[dniVal] = { match: false }; 
+                }            
+            } catch (err) { 
+                resB.classList.remove('hidden'); resB.className = "p-3 rounded-xl mb-4 text-[10px] font-bold bg-red-50 text-red-600 border border-red-200"; resB.innerHTML = "❌ Error al verificar con IA."; 
+            } finally { 
+                btn.disabled = false; btn.innerHTML = "Verificar Identidad con IA"; 
+            }        
         };
 
-        function calcularEstadisticas(cF, zonaFiltro = null) {             
-            let stats = equipos.filter(e => !zonaFiltro || e.zona === zonaFiltro).map(e => ({ id: e.id, nombre: e.nombre, logo: e.logo, pts: 0, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0 }));             
-            partidos.forEach(p => {                 
-                categorias.forEach(cat => {                     
-                    if (cF && cF !== cat) return;                     
-                    const r = p.resultados?.[cat];                     
+        // --- LÓGICA DE NEGOCIO (BASE DE DATOS) ---        
+        window.calcularEstadisticas = function(cF, zonaFiltro = null) {             
+            let stats = window.equipos.filter(e => !zonaFiltro || e.zona === zonaFiltro).map(e => ({ id: e.id, nombre: e.nombre, logo: e.logo, pts: 0, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0 }));             
+            window.partidos.forEach(p => {                 
+                window.categorias.forEach(cat => {                    
+                    if (cF && cF !== cat) return;                    
+                    const r = p.resultados[cat];                    
                     if (r && (r.gL !== undefined || r.npL)) {                        
-                        const loc = stats.find(s => s.id == p.lId), vis = stats.find(s => s.id == p.vId); if (!loc || !vis) return;
-                        loc.pj++; vis.pj++; let gL = r.npL ? 0 : (r.gL || 0), gV = r.npV ? 0 : (r.gV || 0);                        
+                        const loc = stats.find(s => s.id == p.lId), vis = stats.find(s => s.id == p.vId);                        
+                        if (!loc || !vis) return;                        
+                        loc.pj++; vis.pj++;                        
+                        let gL = r.npL ? 0 : (r.gL || 0), gV = r.npV ? 0 : (r.gV || 0);                        
                         if (r.npL && !r.npV) gV = 2; else if (r.npV && !r.npL) gL = 2;                        
                         loc.gf += gL; loc.gc += gV; vis.gf += gV; vis.gc += gL;                        
                         if (gL > gV) { loc.g++; loc.pts += 3; vis.p++; } else if (gL < gV) { vis.g++; vis.pts += 3; loc.p++; } else { loc.e++; vis.e++; loc.pts++; vis.pts++; }                    
                     }                
                 });            
             });             
-            stats.forEach(s => s.dg = s.gf - s.gc); return stats.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);         
-        }
+            stats.forEach(s => s.dg = s.gf - s.gc);             
+            return stats.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);         
+        };
 
-        window.setZonaTablas = (z) => { zonaVisibleTablas = z; document.getElementById('btn-zona-tables-a').className = z === 'A' ? "zona-selector-btn active" : "zona-selector-btn inactive"; document.getElementById('btn-zona-tables-b').className = z === 'B' ? "zona-selector-btn active" : "zona-selector-btn inactive"; renderTablasStandings(); };
-        window.setZonaFixture = (z) => { zonaVisibleFixture = z; document.getElementById('btn-zona-fixture-a').className = z === 'A' ? "zona-selector-btn active" : "zona-selector-btn inactive"; document.getElementById('btn-zona-fixture-b').className = z === 'B' ? "zona-selector-btn active" : "zona-selector-btn inactive"; renderJornadasAgrupadas(); };
-        function calcularCategoria(f) { if (!f) return null; const a = new Date(f + "T00:00:00").getFullYear(); if (a <= 2012 && a >= 2011) return "2011/12"; if (a <= 2014 && a >= 2013) return "2013/14"; if (a <= 2016 && a >= 2015) return "2015/16"; if (a <= 2018 && a >= 2017) return "2017/18"; if (a <= 2020 && a >= 2019) return "2019/20"; return null; }
+        window.setZonaTablas = function(zona) {            
+            window.zonaVisibleTablas = zona;            
+            document.getElementById('btn-zona-tables-a').className = zona === 'A' ? "zona-selector-btn active" : "zona-selector-btn inactive";            
+            document.getElementById('btn-zona-tables-b').className = zona === 'B' ? "zona-selector-btn active" : "zona-selector-btn inactive";            
+            window.renderTablasStandings();        
+        };
 
-        window.renderPestañasFechas = () => {            
-            const cont = document.getElementById('contenedor-pestañas-fechas'); if(!cont) return; let html = "";            
-            for(let i=1; i <= totalJornadas; i++) html += `<div onclick="seleccionarJornada(${i})" class="date-tab ${jornadaActualNum === i ? 'active' : ''}">${i}° Fecha</div>`;
-            if (isAdmin) html += `<div onclick="agregarNuevaJornada()" class="date-tab new-date-btn">+ Nueva Fecha</div>`;
+        window.setZonaFixture = function(zona) {
+            window.zonaVisibleFixture = zona;
+            document.getElementById('btn-zona-fixture-a').className = zona === 'A' ? "zona-selector-btn active" : "zona-selector-btn inactive";
+            document.getElementById('btn-zona-fixture-b').className = zona === 'B' ? "zona-selector-btn active" : "zona-selector-btn inactive";
+            window.renderJornadasAgrupadas();
+        };
+
+        window.calcularCategoria = function(fecha) {            
+            if (!fecha) return null;            
+            const año = new Date(fecha + "T00:00:00").getFullYear();            
+            if (año === 2011 || año === 2012) return "2011/12";            
+            if (año === 2013 || año === 2014) return "2013/14";            
+            if (año === 2015 || año === 2016) return "2015/16";            
+            if (año === 2017 || año === 2018) return "2017/18";            
+            if (año === 2019 || año === 2020) return "2019/20";            
+            return null;        
+        };
+
+        // --- RENDERIZADOS ---        
+        window.renderPestañasFechas = function() {            
+            const cont = document.getElementById('contenedor-pestañas-fechas');            
+            if(!cont) return;            
+            let html = "";            
+            for(let i=1; i <= window.totalJornadas; i++) { html += `<div onclick="seleccionarJornada(${i})" class="date-tab ${window.jornadaActualNum === i ? 'active' : ''}">${i}° Fecha</div>`; }
+            if (window.isAdmin) { html += `<div onclick="agregarNuevaJornada()" class="date-tab new-date-btn">+ Nueva Fecha</div>`; }
             cont.innerHTML = html;        
         };
-        window.seleccionarJornada = (n) => { jornadaActualNum = n; renderPestañasFechas(); renderJornadasAgrupadas(); };
 
-        window.renderTablasStandings = () => {            
-            const container = document.getElementById('tablas-dinamicas'); if (!container) return; container.innerHTML = "";
-            ["general", ...categorias].forEach(cat => {                
-                const catName = cat === 'general' ? 'Gral' : cat;                
-                const catValue = cat === 'general' ? null : cat; const safeId = "cat-" + cat.replace('/', '');                                
-                container.innerHTML += `<div id="${safeId}" class="scroll-mt-48"><div class="flex items-center justify-between mb-4 border-b-2 border-white/20 pb-2"><h3 class="oswald text-2xl font-black uppercase text-white">${catName}</h3><span class="zona-badge ${zonaVisibleTablas === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${zonaVisibleTablas}</span></div>${generarHtmlTabla(`table-${safeId}`, `ZONA ${zonaVisibleTablas}`, calcularEstadisticas(catValue, zonaVisibleTablas))}</div>`;            
+        window.seleccionarJornada = function(num) { window.jornadaActualNum = num; window.renderPestañasFechas(); window.renderJornadasAgrupadas(); };
+        window.agregarNuevaJornada = function() { window.totalJornadas++; window.jornadaActualNum = window.totalJornadas; window.renderPestañasFechas(); window.renderJornadasAgrupadas(); };
+
+        window.eliminarJornadaActual = function() {
+            if (window.totalJornadas <= 1) return window.showStatus("No se puede eliminar la única fecha", true);
+            window.openConfirmModal("Eliminar Fecha", `¿Borrar la fecha ${window.jornadaActualNum} y todos sus partidos?`, async () => {
+                const partsToRemove = window.partidos.filter(p => p.jornada === window.jornadaActualNum);
+                for(let p of partsToRemove) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', p.id.toString())); }
+                
+                const partsToUpdate = window.partidos.filter(p => p.jornada > window.jornadaActualNum);
+                for(let p of partsToUpdate) {
+                    p.jornada--;
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', p.id.toString()), p);
+                }
+            });
+        };
+
+        window.renderTablasStandings = function() {            
+            const container = document.getElementById('tablas-dinamicas');             
+            if (!container) return;            
+            container.innerHTML = "";
+            const cats = ["general", ...window.categorias];            
+            cats.forEach(cat => {                
+                const catName = cat === 'general' ? 'Clasificación General' : `Categoría ${cat}`;                
+                const catValue = cat === 'general' ? null : cat;                
+                const safeId = "cat-" + cat.replace('/', '');                                
+                container.innerHTML += `<div id="${safeId}" class="scroll-mt-48"><div class="flex items-center justify-between mb-4 border-b-2 border-white/20 pb-2"><h3 class="oswald text-2xl font-black uppercase text-white">${catName}</h3><span class="zona-badge ${window.zonaVisibleTablas === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${window.zonaVisibleTablas}</span></div>${window.generarHtmlTabla(`table-${safeId}`, `ZONA ${window.zonaVisibleTablas}`, window.calcularEstadisticas(catValue, window.zonaVisibleTablas))}</div>`;            
             });        
         };
 
-        function generarHtmlTabla(id, t, ls) {            
-            let filas = ls.length === 0 ? `<tr><td colspan="9" class="py-10 text-gray-400 italic text-center text-[9px] uppercase font-bold">Sin equipos</td></tr>` : ls.map((e, i) => `<tr class="table-row"><td class="table-cell text-center text-gray-400 w-8">${i + 1}</td><td class="table-cell px-2"><div class="flex items-center gap-2"><img src="${e.logo || logoLigaGlobal}" class="w-5 h-5 rounded-full object-contain bg-white border" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"><span class="truncate uppercase oswald tracking-tight text-gray-700" style="max-width: 100px;">${e.nombre}</span></div></td><td class="table-cell text-center pts-cell">${e.pts}</td><td class="table-cell text-center">${e.pj}</td><td class="table-cell text-center text-green-500">${e.g}</td><td class="table-cell text-center text-yellow-500">${e.e}</td><td class="table-cell text-center text-red-500">${e.p}</td><td class="table-cell text-center text-[9px] text-gray-400">${e.gf}/${e.gc}</td><td class="table-cell text-center font-black">${e.dg > 0 ? '+' + e.dg : e.dg}</td></tr>`).join('');            
+        window.generarHtmlTabla = function(id, t, ls) {            
+            let filas = ls.length === 0 ? `<tr><td colspan="9" class="py-10 text-gray-400 italic text-center font-bold text-[9px] uppercase">Sin equipos en esta zona</td></tr>` : ls.map((e, index) => `<tr class="table-row"><td class="table-cell text-center text-gray-400 w-8">${index + 1}</td><td class="table-cell px-2"><div class="flex items-center gap-2"><img src="${e.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-5 h-5 rounded-full object-contain bg-white border shadow-xs" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'"><span class="truncate uppercase oswald tracking-tight text-gray-700" style="max-width: 100px;">${e.nombre}</span></div></td><td class="table-cell text-center pts-cell">${e.pts}</td><td class="table-cell text-center">${e.pj}</td><td class="table-cell text-center text-green-500">${e.g}</td><td class="table-cell text-center text-yellow-500">${e.e}</td><td class="table-cell text-center text-red-500">${e.p}</td><td class="table-cell text-center text-[9px] text-gray-400">${e.gf}/${e.gc}</td><td class="table-cell text-center font-black">${e.dg > 0 ? '+' + e.dg : e.dg}</td></tr>`).join('');            
             return `<div id="${id}" class="table-card mb-10"><table class="w-full text-left border-collapse"><thead><tr class="bg-[#4a3b4d]"><th class="table-header-cell text-center text-white/50">#</th><th class="table-header-cell text-white">Equipo</th><th class="table-header-cell text-center text-white bg-[#e6338a]/20">PTS</th><th class="table-header-cell text-center text-white/70">PJ</th><th class="table-header-cell text-center text-white/70">G</th><th class="table-header-cell text-center text-white/70">E</th><th class="table-header-cell text-center text-white/70">P</th><th class="table-header-cell text-center text-white/70">GF/GC</th><th class="table-header-cell text-center text-white/70">DG</th></tr></thead><tbody>${filas}</tbody></table></div>`;        
-        }
-
-        window.renderEquiposList = () => {            
-            const container = document.getElementById('lista-clubes-botones'); if (!container) return;            
-            if (equipos.length === 0) container.innerHTML = `<p class="text-white/60 italic py-10 text-center font-bold uppercase text-[10px]">Sin clubes...</p>`;            
-            else container.innerHTML = equipos.map(e => `<div class="flex gap-2 mb-3"><button onclick="verCategoriasClub('${e.id}')" class="flex-1 bg-white/70 p-5 rounded-[2rem] flex justify-between items-center shadow-lg border-2 border-white active:scale-95 transition-all"><div class="flex items-center gap-4 text-left"><img src="${e.logo || logoLigaGlobal}" class="w-14 h-14 rounded-full object-contain bg-white border-2 border-pink-100 p-0.5" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"><div class="flex flex-col"><span class="font-black text-gray-800 oswald uppercase text-2xl tracking-widest">${e.nombre}</span><span class="zona-badge ${e.zona === 'A' ? 'zona-a' : 'zona-b'} text-center w-16">ZONA ${e.zona}</span></div></div><div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-black">→</div></button>${isAdmin ? `<button onclick="borrarClubAction('${e.id}')" class="bg-red-500 text-white p-4 rounded-3xl shadow-lg active:scale-90 transition-all"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>` : ''}</div>`).join('');        
         };
 
-        window.verCategoriasClub = (id) => {            
-            clubActualId = id; const club = equipos.find(e => e.id == id); if (!club) return;            
+        window.renderEquiposList = function() {            
+            const container = document.getElementById('lista-clubes-botones');             
+            if (!container) return;            
+            if (window.equipos.length === 0) { container.innerHTML = `<p class="text-white/60 italic py-10 text-center font-bold uppercase text-[10px]">Sin clubes registrados...</p>`; } 
+            else { container.innerHTML = window.equipos.map(e => `<div class="flex gap-2 mb-3"><button onclick="verCategoriasClub(${e.id})" class="flex-1 bg-white/70 p-5 rounded-[2rem] flex justify-between items-center shadow-lg border-2 border-white active:scale-95 transition-all"><div class="flex items-center gap-4 text-left"><img src="${e.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-14 h-14 rounded-full object-contain bg-white border-2 border-pink-100 p-0.5 shadow-sm" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'"><div class="flex flex-col"><span class="font-black text-gray-800 oswald uppercase text-2xl tracking-widest">${e.nombre}</span><span class="zona-badge ${e.zona === 'A' ? 'zona-a' : 'zona-b'} text-center w-16">ZONA ${e.zona}</span></div></div><div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-black">→</div></button>${window.isAdmin ? `<button onclick="borrarClubAction(${e.id})" class="bg-red-500 text-white p-4 rounded-3xl shadow-lg active:scale-90 transition-all"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>` : ''}</div>`).join(''); }
+        };
+
+        window.verCategoriasClub = function(id) {            
+            window.clubActualId = id; const club = window.equipos.find(e => e.id == id);            
+            if (!club) return;            
             document.getElementById('detalle-club-nombre').innerText = club.nombre;            
-            document.getElementById('detalle-club-escudo').innerHTML = `<img src="${club.logo || logoLigaGlobal}" class="w-14 h-14 bg-white rounded-full p-1 overflow-hidden object-contain shadow-sm" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'">`;            
-            document.getElementById('lista-categorias-botones').innerHTML = categorias.map(cat => `<button onclick="verPlantelDetalle('${cat}')" class="bg-white p-5 rounded-3xl flex justify-between items-center shadow-lg border-b-4 border-pink-400 active:scale-95 group"><span class="font-black text-[#4a3b4d] oswald uppercase text-xl group-active:text-pink-600">${cat}</span><div class="bg-pink-100 px-3 py-1 rounded-full text-pink-600 font-black text-[9px] uppercase tracking-widest">Plantel</div></button>`).join('');            
-            mostrarSubvista('subvista-club-detalle');        
+            document.getElementById('detalle-club-escudo').innerHTML = `<img src="${club.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-14 h-14 bg-white rounded-full p-1 overflow-hidden object-contain shadow-sm" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">`;            
+            document.getElementById('lista-categorias-botones').innerHTML = window.categorias.map(cat => `<button onclick="verPlantelDetalle('${cat}')" class="bg-white p-5 rounded-3xl flex justify-between items-center shadow-lg border-b-4 border-pink-400 active:scale-95 group"><span class="font-black text-[#4a3b4d] oswald uppercase text-xl group-active:text-pink-600">${cat}</span><div class="bg-pink-100 px-3 py-1 rounded-full text-pink-600 font-black text-[9px] uppercase tracking-widest">Plantel</div></button>`).join('');            
+            window.mostrarSubvista('subvista-club-detalle');        
         };
 
-        window.renderListaFichajes = () => {            
-            const container = document.getElementById('lista-fichajes'); if (!container) return; container.innerHTML = "";            
-            equipos.forEach(equipo => {                
-                const jugs = jugadoras.filter(j => j.clubId == equipo.id);                
+        window.renderListaFichajes = function() {            
+            const container = document.getElementById('lista-fichajes'); if (!container) return;            
+            container.innerHTML = "";            
+            window.equipos.forEach(equipo => {                
+                const jugs = window.jugadoras.filter(j => j.clubId == equipo.id);                
                 if (jugs.length > 0) {                    
                     const card = document.createElement('div'); card.className = "bg-white/80 rounded-3xl shadow-lg overflow-hidden border border-white/50 mb-4 text-left";                    
-                    card.innerHTML = `<div class="bg-[#5d4a5f] p-3 text-white font-bold oswald text-xs uppercase flex items-center gap-2" style="border-bottom: 2px solid #ff4db8;"><img src="${equipo.logo || logoLigaGlobal}" class="w-6 h-6 rounded-full bg-white object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"> ${equipo.nombre}</div><div class="p-1">${jugs.map(j => `<div class="flex justify-between items-center py-2 px-3 border-b border-gray-100 last:border-0"><div class="flex items-center gap-2 text-left"><div class="w-8 h-9 bg-gray-100 rounded overflow-hidden">${j.foto ? `<img src="${j.foto}" class="w-full h-full object-cover">` : ''}</div><div class="flex flex-col"><span class="font-bold text-gray-800 text-[10px] uppercase leading-tight">${j.nombre} ${j.tipo === 'delegado' ? '(D)' : ''}</span><span class="text-[8px] text-pink-600 font-bold uppercase leading-none">${j.cat || '---'}</span></div></div><div class="flex gap-2">${isAdmin ? `<button onclick="verDniDocumento('${j.id}')" class="text-pink-400 p-1">👁️</button>` : ''}<button onclick="verCarnet('${j.id}')" class="text-pink-400 p-1">🪪</button>${isAdmin ? `<button onclick="borrarJugadoraAction('${j.id}')" class="text-red-300 p-1">🗑️</button>` : ''}</div></div>`).join('')}</div>`;                    
+                    let htmlJ = jugs.map(j => `<div class="flex justify-between items-center py-2 px-3 border-b border-gray-100 last:border-0"><div class="flex items-center gap-2 text-left"><div class="w-8 h-9 bg-gray-100 rounded overflow-hidden">${j.foto ? `<img src="${j.foto}" class="w-full h-full object-cover">` : ''}</div><div class="flex flex-col"><span class="font-bold text-gray-800 text-[10px] uppercase leading-tight">${j.nombre} ${j.tipo === 'delegado' ? '(DELEGADO)' : ''}</span><span class="text-[8px] text-pink-600 font-bold uppercase leading-none">${j.cat || '---'}</span></div></div><div class="flex gap-2">${window.isAdmin ? `<button onclick="verDniDocumento(${j.id})" class="text-pink-400 p-1">👁️</button>` : ''}<button onclick="verCarnet(${j.id})" class="text-pink-400 p-1">🪪</button>${window.isAdmin ? `<button onclick="borrarJugadoraAction(${j.id})" class="text-red-300 p-1">🗑️</button>` : ''}</div></div>`).join('');                    
+                    card.innerHTML = `<div class="bg-[#5d4a5f] p-3 text-white font-bold oswald text-xs uppercase flex items-center gap-2" style="border-bottom: 2px solid #ff4db8;"><img src="${equipo.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-6 h-6 rounded-full bg-white object-contain shadow-sm" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'"> ${equipo.nombre}</div><div class="p-1">${htmlJ}</div>`;                    
                     container.appendChild(card);                
                 }            
             });        
         };
 
-        window.setTipoFichaje = (t) => { tipoFichajeActual = t; document.getElementById('btn-type-jugadora').className = t === 'jugadora' ? "fichaje-type-btn active" : "fichaje-type-btn inactive"; document.getElementById('btn-type-delegado').className = t === 'delegado' ? "fichaje-type-btn active" : "fichaje-type-btn inactive"; if (t === 'delegado') { document.getElementById('fichaje-dni-photo-container').style.display = 'none'; document.getElementById('btn-verificar-ia').style.display = 'none'; document.getElementById('fechaNacimientoJugadora').style.display = 'none'; document.getElementById('ia-result-box').classList.add('hidden'); } else { document.getElementById('fichaje-dni-photo-container').style.display = 'flex'; document.getElementById('btn-verificar-ia').style.display = 'flex'; document.getElementById('fechaNacimientoJugadora').style.display = 'block'; } };
-        window.irACategoria = (id, btn) => { const el = document.getElementById(id); if(el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 180, behavior: "smooth" }); document.querySelectorAll('.cat-btn').forEach(b => { b.classList.remove('category-btn-active'); b.classList.add('category-btn-inactive'); }); if(btn) { btn.classList.remove('category-btn-inactive'); btn.classList.add('category-btn-active'); } };
-        window.actualizarSelectsEquipos = () => { const o = equipos.map(e => `<option value="${e.id}">${e.nombre} (ZONA ${e.zona})</option>`).join(''); ['equipoL', 'equipoV', 'clubJugadora'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = o || '<option value="">- Primero crea clubes -</option>'; }); };                
-        window.actualizarTodo = () => { renderEquiposList(); renderTablasStandings(); actualizarSelectsEquipos(); renderListaFichajes(); renderJornadasAgrupadas(); };
-        window.mostrarSubvista = (s) => { document.querySelectorAll('.sub-view').forEach(sv => sv.classList.remove('active')); const target = document.getElementById(s); if(target) target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); };                
-        window.switchView = (v, btn) => { document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active')); document.getElementById('vista-' + v).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); if (v === 'equipos') mostrarSubvista('subvista-equipos-lista'); if (v === 'fechas') { renderPestañasFechas(); renderJornadasAgrupadas(); } if (v === 'posiciones') renderTablasStandings(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-        window.cambiarSeccionPlantel = (s) => { document.getElementById('tab-plantel-jugadoras').classList.toggle('active', s === 'jugadoras'); document.getElementById('tab-plantel-partidos').classList.toggle('active', s === 'partidos'); document.getElementById('contenedor-jugadoras-fichadas').classList.toggle('hidden', s !== 'jugadoras'); document.getElementById('contenedor-partidos-equipo').classList.toggle('hidden', s !== 'partidos'); if (s === 'partidos') renderPartidosEquipo(); };
+        window.setTipoFichaje = function(tipo) {            
+            window.tipoFichajeActual = tipo;            
+            document.getElementById('btn-type-jugadora').className = tipo === 'jugadora' ? "fichaje-type-btn active" : "fichaje-type-btn inactive";            
+            document.getElementById('btn-type-delegado').className = tipo === 'delegado' ? "fichaje-type-btn active" : "fichaje-type-btn inactive";            
+            if (tipo === 'delegado') { document.getElementById('fichaje-dni-photo-container').style.display = 'none'; document.getElementById('btn-verificar-ia').style.display = 'none'; document.getElementById('fechaNacimientoJugadora').style.display = 'none'; document.getElementById('ia-result-box').classList.add('hidden'); document.getElementById('fichaje-face-photo-container').style.display = 'flex'; } 
+            else { document.getElementById('fichaje-dni-photo-container').style.display = 'flex'; document.getElementById('btn-verificar-ia').style.display = 'flex'; document.getElementById('fechaNacimientoJugadora').style.display = 'block'; document.getElementById('fichaje-face-photo-container').style.display = 'flex'; }        
+        };
 
-        window.abrirDetallePartido = (id) => {            
-            const p = partidos.find(m => m.id == id); if (!p) return;            
-            partidoEditandoId = id; const loc = equipos.find(e => e.id == p.lId), vis = equipos.find(e => e.id == p.vId);            
-            document.getElementById('modal-match-fecha').innerText = `${jornadaActualNum}° Fecha`;            
-            document.getElementById('modal-match-nombre-l').innerText = loc?.nombre; document.getElementById('modal-match-nombre-v').innerText = vis?.nombre;            
-            document.getElementById('modal-match-logo-l').innerHTML = `<img src="${loc?.logo || logoLigaGlobal}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'">`;            
-            document.getElementById('modal-match-logo-v').innerHTML = `<img src="${vis?.logo || logoLigaGlobal}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'">`;            
-            document.getElementById('contenedor-inputs-categorias').innerHTML = categorias.map(cat => {                
-                const r = p.resultados?.[cat] || {}; const safeCat = cat.replace('/', '-');                
-                return `<div class="bg-gray-50 rounded-2xl p-4 border border-gray-100"><div class="flex justify-between items-center mb-3"><span class="text-[9px] font-black text-pink-600 uppercase tracking-widest">${cat}</span><div class="flex gap-2"><label class="flex items-center gap-1"><input type="checkbox" id="npL-${safeCat}" ${r.npL ? 'checked' : ''} class="w-3 h-3 accent-pink-600" ${!isAdmin ? 'disabled' : ''}><span class="text-[8px] font-bold text-gray-400 uppercase">NP L</span></label><label class="flex items-center gap-1"><input type="checkbox" id="npV-${safeCat}" ${r.npV ? 'checked' : ''} class="w-3 h-3 accent-pink-600" ${!isAdmin ? 'disabled' : ''}><span class="text-[8px] font-bold text-gray-400 uppercase">NP V</span></label></div></div><div class="flex items-center justify-center gap-4"><input type="number" id="valL-${safeCat}" value="${r.gL !== undefined ? r.gL : ''}" placeholder="0" class="w-16 py-3 rounded-xl bg-white border border-gray-200 font-black text-center text-xl text-gray-800 focus:ring-2 focus:ring-pink-200 outline-none disabled:bg-gray-100 disabled:text-gray-400" ${!isAdmin ? 'disabled' : ''}><span class="text-gray-300 font-black">-</span><input type="number" id="valV-${safeCat}" value="${r.gV !== undefined ? r.gV : ''}" placeholder="0" class="w-16 py-3 rounded-xl bg-white border border-gray-200 font-black text-center text-xl text-gray-800 focus:ring-2 focus:ring-pink-200 outline-none disabled:bg-gray-100 disabled:text-gray-400" ${!isAdmin ? 'disabled' : ''}></div></div>`;            
+        window.irACategoria = function(id, btn) {            
+            const el = document.getElementById(id);            
+            if(el) { const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - 180; window.scrollTo({ top: offsetPosition, behavior: "smooth" }); }            
+            document.querySelectorAll('.cat-btn').forEach(b => { b.classList.remove('category-btn-active'); b.classList.add('category-btn-inactive'); });            
+            if(btn) { btn.classList.remove('category-btn-inactive'); btn.classList.add('category-btn-active'); }        
+        };
+
+        window.actualizarSelectsEquipos = function() { 
+            const o = window.equipos.map(e => `<option value="${e.id}">${e.nombre} (ZONA ${e.zona})</option>`).join(''); 
+            ['equipoL', 'equipoV', 'clubJugadora'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = o || '<option value="">- Primero crea clubes -</option>'; }); 
+        };                
+
+        window.actualizarTodo = function() {             
+            window.renderEquiposList(); window.renderTablasStandings(); window.actualizarSelectsEquipos(); window.renderListaFichajes(); window.renderJornadasAgrupadas();         
+        };
+
+        window.mostrarSubvista = function(subId) { document.querySelectorAll('.sub-view').forEach(sv => sv.classList.remove('active')); const target = document.getElementById(subId); if(target) target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); };                
+
+        window.switchView = function(viewId, btn) {            
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active')); document.getElementById('vista-' + viewId).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));            
+            if(btn) btn.classList.add('active');            
+            if (viewId === 'equipos') window.mostrarSubvista('subvista-equipos-lista');            
+            if (viewId === 'fechas') { window.renderPestañasFechas(); window.renderJornadasAgrupadas(); }            
+            if (viewId === 'posiciones') { window.renderTablasStandings(); }            
+            window.actualizarTodo(); window.scrollTo({ top: 0, behavior: 'smooth' });        
+        };
+
+        window.cambiarSeccionPlantel = function(seccion) {            
+            document.getElementById('tab-plantel-jugadoras').classList.toggle('active', seccion === 'jugadoras'); document.getElementById('tab-plantel-partidos').classList.toggle('active', seccion === 'partidos'); document.getElementById('contenedor-jugadoras-fichadas').classList.toggle('hidden', seccion !== 'jugadoras'); document.getElementById('contenedor-partidos-equipo').classList.toggle('hidden', seccion !== 'partidos');            
+            if (seccion === 'partidos') window.renderPartidosEquipo();        
+        };
+
+        window.abrirDetallePartido = function(id) {            
+            const p = window.partidos.find(match => match.id == id); if (!p) return;            
+            window.partidoEditandoId = id; const loc = window.equipos.find(e => e.id == p.lId), vis = window.equipos.find(e => e.id == p.vId);            
+            document.getElementById('modal-match-fecha').innerText = `${window.jornadaActualNum}° Fecha`; document.getElementById('modal-match-nombre-l').innerText = loc?.nombre; document.getElementById('modal-match-nombre-v').innerText = vis?.nombre;            
+            document.getElementById('modal-match-logo-l').innerHTML = `<img src="${loc?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">`; document.getElementById('modal-match-logo-v').innerHTML = `<img src="${vis?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">`;            
+            
+            document.getElementById('contenedor-inputs-categorias').innerHTML = window.categorias.map(cat => {                
+                const r = p.resultados[cat] || {}; const safeCat = cat.replace('/', '-');                
+                return `<div class="bg-gray-50 rounded-2xl p-4 border border-gray-100"><div class="flex justify-between items-center mb-3"><span class="text-[9px] font-black text-pink-600 uppercase tracking-widest">${cat}</span><div class="flex gap-2"><label class="flex items-center gap-1"><input type="checkbox" id="npL-${safeCat}" ${r.npL ? 'checked' : ''} class="w-3 h-3 accent-pink-600" ${!window.isAdmin ? 'disabled' : ''}> <span class="text-[8px] font-bold text-gray-400 uppercase">NP L</span></label><label class="flex items-center gap-1"><input type="checkbox" id="npV-${safeCat}" ${r.npV ? 'checked' : ''} class="w-3 h-3 accent-pink-600" ${!window.isAdmin ? 'disabled' : ''}> <span class="text-[8px] font-bold text-gray-400 uppercase">NP V</span></label></div></div><div class="flex items-center justify-center gap-4"><input type="number" id="valL-${safeCat}" value="${r.gL !== undefined ? r.gL : ''}" placeholder="0" class="w-16 py-3 rounded-xl bg-white border border-gray-200 font-black text-center text-xl text-gray-800 focus:ring-2 focus:ring-pink-200 outline-none disabled:bg-gray-100 disabled:text-gray-400" ${!window.isAdmin ? 'disabled' : ''}><span class="text-gray-300 font-black">-</span><input type="number" id="valV-${safeCat}" value="${r.gV !== undefined ? r.gV : ''}" placeholder="0" class="w-16 py-3 rounded-xl bg-white border border-gray-200 font-black text-center text-xl text-gray-800 focus:ring-2 focus:ring-pink-200 outline-none disabled:bg-gray-100 disabled:text-gray-400" ${!window.isAdmin ? 'disabled' : ''}></div></div>`;            
             }).join('');            
             document.getElementById('match-detail-modal').style.display = 'flex'; document.body.style.overflow = 'hidden';        
         };
 
-        window.renderJornadasAgrupadas = () => {            
+        window.guardarResultadosPartidoActual = async function() {            
+            if (!window.partidoEditandoId) return; const p = window.partidos.find(m => m.id == window.partidoEditandoId);            
+            window.categorias.forEach(cat => {                
+                const safeCat = cat.replace('/', '-'); const gL = document.getElementById(`valL-${safeCat}`).value, gV = document.getElementById(`valV-${safeCat}`).value; const npL = document.getElementById(`npL-${safeCat}`).checked, npV = document.getElementById(`npV-${safeCat}`).checked;                
+                if (gL !== "" || gV !== "" || npL || npV) { p.resultados[cat] = { gL: gL !== "" ? parseInt(gL) : 0, gV: gV !== "" ? parseInt(gV) : 0, npL: npL, npV: npV }; }            
+            });            
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', p.id.toString()), p);
+            window.cerrarDetallePartido();         
+        };
+
+        window.renderJornadasAgrupadas = function() {            
             const c = document.getElementById('contenedor-jornadas-historial'); if (!c) return;            
-            const filtrados = partidos.filter(p => { if (p.jornada != jornadaActualNum) return false; const loc = equipos.find(e => e.id == p.lId); return loc && loc.zona === zonaVisibleFixture; });            
-            if (filtrados.length === 0) { c.innerHTML = `<div class="flex flex-col items-center justify-center py-12 text-gray-400 bg-white/40 rounded-[2rem] border-2 border-dashed border-white/50"><p class="text-sm font-medium uppercase oswald tracking-widest text-center px-4">No hay partidos para esta zona</p></div>`; return; }            
+            const filtrados = window.partidos.filter(p => { if (p.jornada != window.jornadaActualNum) return false; const loc = window.equipos.find(e => e.id == p.lId); return loc && loc.zona === window.zonaVisibleFixture; });            
+            if (filtrados.length === 0) { c.innerHTML = `<div class="flex flex-col items-center justify-center py-12 text-gray-400 bg-white/40 rounded-[2rem] border-2 border-dashed border-white/50"><p class="text-sm font-medium uppercase oswald tracking-widest text-center px-4">No hay partidos para esta zona en la fecha actual</p></div>`; return; }            
             c.innerHTML = filtrados.map(p => {                
-                const loc = equipos.find(e => e.id == p.lId), vis = equipos.find(e => e.id == p.vId);                
-                let completados = 0; categorias.forEach(cat => { if (p.resultados && p.resultados[cat]) completados++; });                
-                return `<div onclick="abrirDetallePartido('${p.id}')" class="bg-white rounded-[2rem] p-6 shadow-lg border border-white active:scale-[0.98] transition-all cursor-pointer group"><div class="flex justify-between items-center mb-4"><span class="text-[8px] font-black text-gray-300 uppercase tracking-widest">Enfrentamiento</span><span class="text-[8px] font-black px-3 py-1 rounded-full ${completados === 5 ? 'bg-green-100 text-green-600' : 'bg-pink-50 text-pink-600'} uppercase">${completados}/5 Categorías</span></div><div class="flex items-center justify-between gap-2"><div class="flex flex-col items-center flex-1 text-center"><img src="${loc?.logo || logoLigaGlobal}" class="w-12 h-12 rounded-full bg-white object-contain mb-2 border" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"><span class="oswald text-xs font-black uppercase text-gray-800 line-clamp-1">${loc?.nombre || '---'}</span><span class="zona-badge ${loc?.zona === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${loc?.zona}</span></div><div class="flex flex-col items-center px-4"><span class="oswald text-2xl font-black text-gray-100 uppercase">VS</span></div><div class="flex flex-col items-center flex-1 text-center"><img src="${vis?.logo || logoLigaGlobal}" class="w-12 h-12 rounded-full bg-white object-contain mb-2 border" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"><span class="oswald text-xs font-black uppercase text-gray-800 line-clamp-1">${vis?.nombre || '---'}</span><span class="zona-badge ${vis?.zona === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${vis?.zona}</span></div></div>${isAdmin ? `<div class="mt-5 pt-4 border-t border-gray-50 flex justify-end"><button onclick="event.stopPropagation(); eliminarCruce('${p.id}')" class="text-gray-300 hover:text-red-500 transition-colors">🗑️</button></div>` : ''}</div>`;            
+                const loc = window.equipos.find(e => e.id == p.lId), vis = window.equipos.find(e => e.id == p.vId); let completados = 0; window.categorias.forEach(cat => { if (p.resultados && p.resultados[cat]) completados++; });                
+                return `<div onclick="abrirDetallePartido(${p.id})" class="bg-white rounded-[2rem] p-6 shadow-lg border border-white active:scale-[0.98] transition-all cursor-pointer group"><div class="flex justify-between items-center mb-4"><span class="text-[8px] font-black text-gray-300 uppercase tracking-widest">Enfrentamiento</span><span class="text-[8px] font-black px-3 py-1 rounded-full ${completados === 5 ? 'bg-green-100 text-green-600' : 'bg-pink-50 text-pink-600'} uppercase">${completados}/5 Categorías</span></div><div class="flex items-center justify-between gap-2"><div class="flex flex-col items-center flex-1 text-center"><img src="${loc?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-12 h-12 rounded-full bg-white object-contain mb-2 shadow-sm border border-pink-50" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'"><span class="oswald text-xs font-black uppercase text-gray-800 line-clamp-1">${loc?.nombre || '---'}</span><span class="zona-badge ${loc?.zona === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${loc?.zona}</span></div><div class="flex flex-col items-center px-4"><span class="oswald text-2xl font-black text-gray-100 uppercase">VS</span></div><div class="flex flex-col items-center flex-1 text-center"><img src="${vis?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-12 h-12 rounded-full bg-white object-contain mb-2 shadow-sm border border-pink-50" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'"><span class="oswald text-xs font-black uppercase text-gray-800 line-clamp-1">${vis?.nombre || '---'}</span><span class="zona-badge ${vis?.zona === 'A' ? 'zona-a' : 'zona-b'}">ZONA ${vis?.zona}</span></div></div>${window.isAdmin ? `<div class="mt-5 pt-4 border-t border-gray-50 flex justify-end"><button onclick="event.stopPropagation(); eliminarCruce(${p.id})" class="text-gray-300 hover:text-red-500 transition-colors">🗑️</button></div>` : ''}</div>`;            
             }).join('');        
         };
 
-        window.previewFoto = (e, t) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = async (ev) => { const res = await compressImage(ev.target.result, 300); if (t === 'perfil') { fotoTemporal = res; document.getElementById('image-preview').src = res; document.getElementById('image-preview').classList.remove('hidden'); document.getElementById('placeholder-icon').classList.add('hidden'); } else { fotoDniTemporal = res; document.getElementById('dni-image-preview').src = res; document.getElementById('dni-image-preview').classList.remove('hidden'); document.getElementById('placeholder-dni-icon').classList.add('hidden'); } }; r.readAsDataURL(f); } };
-        
-        window.previewLogoClub = (e) => { 
-            const f = e.target.files[0]; 
-            if (f) { 
-                const r = new FileReader(); 
-                r.onload = async (ev) => { 
-                    const compressed = await compressImage(ev.target.result, 300);
-                    logoClubTemporal = compressed; 
-                    document.getElementById('club-logo-preview').src = compressed; 
-                    document.getElementById('club-logo-preview').classList.remove('hidden'); 
-                    document.getElementById('club-placeholder-logo').classList.add('hidden'); 
-                }; 
-                r.readAsDataURL(f); 
-            } 
-        };
-        
-        function resetFormFoto() { fotoTemporal = null; fotoDniTemporal = null; document.getElementById('image-preview').classList.add('hidden'); document.getElementById('placeholder-icon').classList.remove('hidden'); document.getElementById('dni-image-preview').classList.add('hidden'); document.getElementById('placeholder-dni-icon').classList.remove('hidden'); }
-        function resetFormLogo() { logoClubTemporal = null; document.getElementById('club-logo-preview').classList.add('hidden'); document.getElementById('club-placeholder-logo').classList.remove('hidden'); }
+        window.agregarEquipo = async function() { 
+            const n = document.getElementById('nombreEquipo').value.trim(); const z = document.getElementById('zonaEquipo').value; 
+            if (!n) return; 
+            const newId = Date.now();
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'equipos', newId.toString()), { id: newId, nombre: n.toUpperCase(), logo: window.logoClubTemporal, zona: z });
+            document.getElementById('nombreEquipo').value = ""; window.resetFormLogo(); 
+        };        
 
-        window.verCarnet = (id) => {            
-            const persona = jugadoras.find(j => j.id == id); const club = equipos.find(e => e.id == persona.clubId);
-            const verifiedHtml = identidadesVerificadas[persona.dni]?.match ? `<div style="position:absolute; top: 10px; right: 10px; background:#10b981; color:white; font-size:7px; padding:2px 6px; border-radius:4px; z-index:50; font-weight:bold;">VERIFICADO IA</div>` : "";            
-            document.getElementById('id-card-render').innerHTML = `<div class="id-card">${verifiedHtml}<div class="id-card-header"><div class="w-10 h-10 bg-white rounded-full p-0.5 overflow-hidden border-2 border-pink-400 leading-none shadow-sm"><img src="${logoLigaGlobal}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"></div><span class="oswald font-black text-sm uppercase leading-none">La Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${persona.foto || ''}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"></div><div class="id-details"><div class="id-label">Apellido y Nombre</div><div class="id-value leading-none">${persona.nombre}</div><div class="id-label">Club / Equipo</div><div class="id-value text-pink-600 leading-none">${club?.nombre || '---'}</div><div class="flex gap-4 mt-1 leading-none"><div><div class="id-label">${persona.tipo === 'delegado' ? 'CARGO' : 'CATEGORÍA'}</div><div class="id-value leading-none" style="font-size: 10px;">${persona.tipo === 'delegado' ? 'DELEGADO' : persona.cat}</div></div><div><div class="id-label">DNI / ID</div><div class="id-value leading-none" style="font-size: 10px;">${persona.dni}</div></div></div></div><img src="${logoLigaGlobal}" class="watermark" style="opacity:0.1" onerror="this.style.display='none'"></div><div class="id-footer">Oficial 2026</div></div>`;            
-            document.getElementById('modal-container').style.display = 'flex'; document.body.style.overflow = 'hidden';        
-        };
+        window.borrarClubAction = function(id) { 
+            window.openConfirmModal("Eliminar Club", "¿Borrar este club y sus datos?", async () => { 
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'equipos', id.toString()));
+                const jugs = window.jugadoras.filter(j => j.clubId == id);
+                for(let j of jugs) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'jugadoras', j.id.toString())); }
+                const parts = window.partidos.filter(p => p.lId == id || p.vId == id);
+                for(let p of parts) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', p.id.toString())); }
+                window.mostrarSubvista('subvista-equipos-lista'); 
+            }); 
+        };        
 
-        window.verDniDocumento = (id) => { const p = jugadoras.find(j => j.id == id); document.getElementById('dni-image-render').innerHTML = p?.fotoDni ? `<img src="${p.fotoDni}" class="max-w-full rounded-lg">` : `<p class="text-gray-400 italic">Sin foto</p>`; document.getElementById('dni-modal-container').style.display = 'flex'; };
+        window.agregarCruceAlFixture = async function() { 
+            const lId = parseInt(document.getElementById('equipoL').value), vId = parseInt(document.getElementById('equipoV').value); 
+            if (!lId || !vId || lId === vId) return; 
+            const newId = Date.now();
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', newId.toString()), { id: newId, jornada: window.jornadaActualNum, lId: lId, vId: vId, resultados: {} });
+            window.cerrarNuevoPartido(); 
+        };        
 
-        window.verPlantelDetalle = (cat) => {            
-            categoriaActual = cat; const club = equipos.find(e => e.id == clubActualId); if (!club) return;            
-            document.getElementById('plantel-club-nombre').innerText = club.nombre; document.getElementById('plantel-categoria-nombre').innerText = "CATEGORÍA " + cat; cambiarSeccionPlantel('jugadoras');            
-            const plantel = jugadoras.filter(j => j.clubId == clubActualId && j.cat === cat && j.tipo === 'jugadora');            
-            const delegados = jugadoras.filter(j => j.clubId == clubActualId && j.tipo === 'delegado');            
-            let html = `<h4 class="oswald text-xs font-black uppercase text-pink-500 mb-3 ml-2 text-left">Jugadoras ${cat}</h4>`;            
-            if (plantel.length === 0) html += `<div class="bg-white/40 p-12 rounded-3xl text-center italic text-gray-400 mb-8">Sin jugadoras registradas</div>`;            
-            else html += plantel.map(j => `<div class="bg-white p-4 rounded-2xl shadow-md flex justify-between items-center mb-3 border-l-8 ${identidadesVerificadas[j.dni]?.match ? 'border-green-500' : 'border-pink-500'}"><div class="flex items-center gap-4 text-left"><img src="${j.foto || ''}" class="w-14 h-16 bg-gray-100 rounded-xl object-cover border-2 border-pink-50" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><div class="flex flex-col"><span class="font-black text-gray-800 uppercase text-lg tracking-tighter">${j.nombre}</span><span class="text-[10px] text-gray-400 font-black uppercase">DNI: ${j.dni} ${identidadesVerificadas[j.dni]?.match ? '✅' : ''}</span></div></div><div class="flex gap-2">${isAdmin ? `<button onclick="verDniDocumento('${j.id}')" class="bg-[#4a3b4d] p-3 rounded-xl text-white shadow-lg font-black text-[9px]">DNI</button>` : ''}<button onclick="verCarnet('${j.id}')" class="bg-pink-600 p-3 rounded-xl text-white shadow-lg">🪪</button>${isAdmin ? `<button onclick="borrarJugadoraAction('${j.id}')" class="bg-red-500 p-3 rounded-xl text-white shadow-lg">🗑️</button>` : ''}</div></div>`).join('');            
-            if (delegados.length > 0) {                
-                html += `<h4 class="oswald text-xs font-black uppercase text-gray-400 mt-8 mb-3 ml-2 text-left pt-6">Delegados</h4>`;                
-                html += delegados.map(j => `<div class="bg-[#4a3b4d] p-4 rounded-2xl shadow-md flex justify-between items-center mb-4 border-l-8 border-white/20"><div class="flex items-center gap-4 text-left"><img src="${j.foto || ''}" class="w-14 h-16 bg-white/10 rounded-xl object-cover border-2 border-white/10" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><div class="flex flex-col text-left"><span class="font-black text-white uppercase text-lg tracking-tighter">${j.nombre}</span><span class="text-[10px] text-white/50 font-black uppercase">DNI: ${j.dni}</span></div></div><div class="flex gap-2"><button onclick="verCarnet('${j.id}')" class="bg-white/10 p-3 rounded-xl text-white shadow-lg">🪪</button>${isAdmin ? `<button onclick="borrarJugadoraAction('${j.id}')" class="bg-red-500 p-3 rounded-xl text-white shadow-lg">🗑️</button>` : ''}</div></div>`).join('');            
+        window.eliminarCruce = function(id) { 
+            window.openConfirmModal("Eliminar Cruce", "¿Borrar este partido?", async () => { 
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'partidos', id.toString()));
+            }); 
+        };        
+
+        window.verCarnet = function(id) { 
+            const persona = window.jugadoras.find(j => j.id == id); const club = window.equipos.find(e => e.id == persona.clubId); const verifiedHtml = window.identidadesVerificadas[persona.dni]?.match ? `<div style="position:absolute; top: 10px; right: 10px; background:#10b981; color:white; font-size:7px; padding:2px 6px; border-radius:4px; z-index:50; font-weight:bold;">VERIFICADO IA</div>` : ""; 
+            document.getElementById('id-card-render').innerHTML = `<div class="id-card">${verifiedHtml}<div class="id-card-header"><div class="w-10 h-10 bg-white rounded-full p-0.5 overflow-hidden border-2 border-pink-400 leading-none shadow-sm"><img src="${club?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'"></div><span class="oswald font-black text-sm uppercase leading-none">La Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${persona.foto || ''}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"></div><div class="id-details"><div class="id-label">Apellido y Nombre</div><div class="id-value leading-none">${persona.nombre}</div><div class="id-label">Club / Equipo</div><div class="id-value text-pink-600 leading-none">${club?.nombre || '---'}</div><div class="flex gap-4 mt-1 leading-none"><div><div class="id-label">${persona.tipo === 'delegado' ? 'CARGO' : 'CATEGORÍA'}</div><div class="id-value leading-none" style="font-size: 10px;">${persona.tipo === 'delegado' ? 'DELEGADO' : persona.cat}</div></div><div><div class="id-label">DNI / ID</div><div class="id-value leading-none" style="font-size: 10px;">${persona.dni}</div></div></div></div><img src="LOGO.LIGADELASNENAS.jpeg" class="watermark" onerror="this.style.display='none'"></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; document.body.style.overflow = 'hidden'; 
+        };        
+
+        window.verDniDocumento = function(id) { 
+            const persona = window.jugadoras.find(j => j.id == id), img = persona?.fotoDni; 
+            document.getElementById('dni-image-render').innerHTML = img ? `<img src="${img}" class="max-w-full rounded-lg shadow-sm">` : `<p class="text-gray-400 uppercase oswald italic text-center">Sin foto</p>`; document.getElementById('dni-modal-container').style.display = 'flex'; 
+        };                
+
+        window.ficharPersona = async function() {            
+            const ape = document.getElementById('apellidoJugadora').value.trim(), nom = document.getElementById('nombreJugadora').value.trim(), d = document.getElementById('dniJugadora').value.trim(), clId = document.getElementById('clubJugadora').value;            
+            if (!ape || !nom || !clId || !d) return window.showStatus("Faltan datos básicos", true);            
+            
+            let cat = null; const newId = Date.now();            
+            let p = { id: newId, nombre: `${ape} ${nom}`.toUpperCase(), dni: d, clubId: parseInt(clId), tipo: window.tipoFichajeActual, foto: window.fotoTemporal };            
+            
+            if (window.tipoFichajeActual === 'jugadora') {                
+                const fn = document.getElementById('fechaNacimientoJugadora').value;                
+                if (!fn) return window.showStatus("Falta fecha de nacimiento", true);                
+                cat = window.calcularCategoria(fn);                
+                if (!cat) return window.showStatus("Edad fuera de rango", true);                
+                p.fechaNac = fn; p.cat = cat; p.fotoDni = window.fotoDniTemporal;            
             }            
-            document.getElementById('contenedor-jugadoras-fichadas').innerHTML = html; mostrarSubvista('subvista-plantel-detalle');        
+            
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'jugadoras', newId.toString()), p);
+            window.showStatus(window.tipoFichajeActual === 'delegado' ? "¡Delegado fichado!" : "¡Jugadora fichada!");            
+            
+            document.getElementById('apellidoJugadora').value = ""; document.getElementById('nombreJugadora').value = ""; document.getElementById('dniJugadora').value = "";            
+            if (window.tipoFichajeActual === 'jugadora') document.getElementById('fechaNacimientoJugadora').value = "";            
+            
+            window.resetFormFoto(); 
+            // Inyectamos temporalmente para poder renderizar de inmediato el carnet antes de que llegue de la base de datos
+            window.jugadoras.push(p); 
+            window.verCarnet(newId);        
         };
 
-        window.renderPartidosEquipo = () => {            
-            const container = document.getElementById('contenedor-partidos-equipo'), clubAct = equipos.find(e => e.id == clubActualId), hist = partidos.filter(p => p.lId == clubActualId || p.vId == clubActualId);            
+        window.borrarJugadoraAction = function(id) { 
+            window.openConfirmModal("Eliminar Persona", "¿Borrar esta ficha?", async () => { 
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'jugadoras', id.toString()));
+                if (window.categoriaActual && window.clubActualId) window.verPlantelDetalle(window.categoriaActual); 
+            }); 
+        };                
+
+        window.verPlantelDetalle = function(cat) {            
+            window.categoriaActual = cat; const club = window.equipos.find(e => e.id == window.clubActualId);            
+            if (!club) return;            
+            document.getElementById('plantel-club-nombre').innerText = club.nombre; document.getElementById('plantel-categoria-nombre').innerText = "CATEGORÍA " + cat;            
+            window.cambiarSeccionPlantel('jugadoras');            
+            
+            const plantel = window.jugadoras.filter(j => j.clubId == window.clubActualId && j.cat === cat && j.tipo === 'jugadora');            
+            const delegados = window.jugadoras.filter(j => j.clubId == window.clubActualId && j.tipo === 'delegado');            
+            let html = `<h4 class="oswald text-xs font-black uppercase text-pink-500 mb-3 ml-2 tracking-widest text-left">Jugadoras Categoría ${cat}</h4>`;            
+            
+            if (plantel.length === 0) { html += `<div class="bg-white/40 p-12 rounded-3xl text-center italic text-gray-400 shadow-inner mb-8">Sin jugadoras registradas</div>`; } 
+            else { html += plantel.map(j => `<div class="bg-white p-4 rounded-2xl shadow-md flex justify-between items-center mb-3 border-l-8 ${window.identidadesVerificadas[j.dni]?.match ? 'border-green-500' : 'border-pink-500'}"><div class="flex items-center gap-4 text-left"><img src="${j.foto || ''}" class="w-14 h-16 bg-gray-100 rounded-xl object-cover shadow-sm border-2 border-pink-50" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><div class="flex flex-col"><span class="font-black text-gray-800 uppercase text-lg tracking-tighter">${j.nombre}</span><span class="text-[10px] text-gray-400 font-black uppercase">DNI: ${j.dni} ${window.identidadesVerificadas[j.dni]?.match ? '✅' : ''}</span></div></div><div class="flex gap-2">${window.isAdmin ? `<button onclick="verDniDocumento(${j.id})" class="bg-[#4a3b4d] p-3 rounded-xl text-white shadow-lg font-black text-[9px] uppercase">DNI</button>` : ''}<button onclick="verCarnet(${j.id})" class="bg-pink-600 p-3 rounded-xl text-white shadow-lg active:scale-90">🪪</button>${window.isAdmin ? `<button onclick="borrarJugadoraAction(${j.id})" class="bg-red-500 p-3 rounded-xl text-white shadow-lg active:scale-90">🗑️</button>` : ''}</div></div>`).join(''); }            
+            if (delegados.length > 0) { html += `<h4 class="oswald text-xs font-black uppercase text-gray-400 mt-8 mb-3 ml-2 tracking-widest text-left border-t pt-6 border-white/30">Delegados del Club</h4>` + delegados.map(j => `<div class="bg-[#4a3b4d] p-4 rounded-2xl shadow-md flex justify-between items-center mb-4 border-l-8 border-white/20"><div class="flex items-center gap-4 text-left"><img src="${j.foto || ''}" class="w-14 h-16 bg-white/10 rounded-xl object-cover shadow-sm border-2 border-white/10" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><div class="flex flex-col text-left"><span class="font-black text-white uppercase text-lg tracking-tighter">${j.nombre}</span><span class="text-[10px] text-white/50 font-black uppercase">DNI: ${j.dni}</span></div></div><div class="flex gap-2"><button onclick="verCarnet(${j.id})" class="bg-white/10 p-3 rounded-xl text-white shadow-lg active:scale-90">🪪</button>${window.isAdmin ? `<button onclick="borrarJugadoraAction(${j.id})" class="bg-red-500 p-3 rounded-xl text-white shadow-lg active:scale-90">🗑️</button>` : ''}</div></div>`).join(''); }            
+            
+            document.getElementById('contenedor-jugadoras-fichadas').innerHTML = html; window.mostrarSubvista('subvista-plantel-detalle');        
+        };
+
+        window.renderPartidosEquipo = function() {            
+            const container = document.getElementById('contenedor-partidos-equipo'), clubAct = window.equipos.find(e => e.id == window.clubActualId), hist = window.partidos.filter(p => p.lId == window.clubActualId || p.vId == window.clubActualId);            
             const jugados = [], pendientes = [];            
-            hist.forEach(p => { const res = p.resultados?.[categoriaActual]; if (res && (res.gL !== undefined || res.npL)) jugados.push(p); else pendientes.push(p); });            
+            hist.forEach(p => { const res = p.resultados[window.categoriaActual]; if (res && (res.gL !== undefined || res.npL)) jugados.push(p); else pendientes.push(p); });            
+            
             if (hist.length === 0) { container.innerHTML = `<div class="bg-white/40 p-12 rounded-3xl text-center italic text-gray-500">Sin partidos registrados</div>`; return; }            
             let html = `<div class="grid grid-cols-2 gap-2 mb-6"><div class="bg-white p-3 rounded-2xl text-center border border-gray-100"><span class="block text-[8px] font-black text-gray-400 uppercase">Jugados</span><span class="text-xl font-black text-pink-600 oswald">${jugados.length}</span></div><div class="bg-white p-3 rounded-2xl text-center border border-gray-100"><span class="block text-[8px] font-black text-gray-400 uppercase">Pendientes</span><span class="text-xl font-black text-gray-400 oswald">${pendientes.length}</span></div></div>`;            
-            if (pendientes.length > 0) html += `<h4 class="oswald text-xs font-black uppercase text-gray-400 mb-3 ml-2 text-left">Pendientes</h4>` + pendientes.map(p => { const soyL = p.lId == clubActualId, rival = equipos.find(e => e.id == (soyL ? p.vId : p.lId)); return `<div class="bg-white/60 p-4 rounded-2xl border-2 border-dashed border-gray-200 mb-3 opacity-80"><div class="flex justify-between items-center mb-2"><span class="text-[8px] font-black text-gray-400 uppercase text-left">Fecha ${p.jornada}</span></div><div class="flex items-center justify-between gap-4"><div class="flex items-center gap-2 flex-1 text-left"><img src="${clubAct?.logo || logoLigaGlobal}" class="w-6 h-6 rounded-full object-contain grayscale" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"><span class="oswald text-[10px] text-gray-500 font-bold">${clubAct?.nombre}</span></div><span class="oswald text-sm font-black text-gray-300 mx-2">VS</span><div class="flex items-center gap-2 flex-1 justify-end text-right"><span class="oswald text-[10px] text-gray-500 font-bold">${rival?.nombre}</span><img src="${rival?.logo || logoLigaGlobal}" class="w-6 h-6 rounded-full object-contain grayscale" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"></div></div></div>`; }).join('');            
-            if (jugados.length > 0) html += `<h4 class="oswald text-xs font-black uppercase text-pink-500 mb-3 mt-6 ml-2 text-left">Historial</h4>` + jugados.map(p => { const res = p.resultados?.[categoriaActual]; const soyL = p.lId == clubActualId, rival = equipos.find(e => e.id == (soyL ? p.vId : p.lId)); if(!res) return ''; const miG = soyL ? (res.npL ? 'NP' : res.gL) : (res.npV ? 'NP' : res.gV), suG = soyL ? (res.npV ? 'NP' : res.gV) : (res.npL ? 'NP' : res.gL); let resC = miG > suG ? "bg-green-100" : (miG < suG ? "bg-red-100" : "bg-yellow-100"); return `<div class="bg-white p-4 rounded-2xl shadow-md border-2 border-white mb-3"><div class="flex justify-between items-center mb-2 text-left"><span class="text-[9px] font-black text-gray-400 uppercase">Fecha ${p.jornada}</span><span class="text-[8px] font-black ${soyL ? 'text-blue-500' : 'text-orange-500'} uppercase">${soyL ? 'LOCAL' : 'VISITANTE'}</span></div><div class="flex items-center justify-between gap-4"><div class="flex items-center gap-2 flex-1 text-left"><img src="${clubAct?.logo || logoLigaGlobal}" class="w-8 h-8 rounded-full object-contain shadow-sm" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"><span class="oswald text-[10px] font-bold truncate">${clubAct?.nombre}</span></div><div class="flex items-center gap-2 px-3 py-1 rounded-lg font-black text-lg ${resC}"><span>${miG}</span><span>-</span><span>${suG}</span></div><div class="flex items-center gap-2 flex-1 justify-end text-right"><span class="oswald text-[10px] font-bold truncate">${rival?.nombre}</span><img src="${rival?.logo || logoLigaGlobal}" class="w-8 h-8 rounded-full object-contain shadow-sm" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3306/3306567.png'"></div></div></div>`; }).join('');            
+            
+            if (pendientes.length > 0) { html += `<h4 class="oswald text-xs font-black uppercase text-gray-400 mb-3 ml-2 text-left">Pendientes</h4>` + pendientes.map(p => { const soyL = p.lId == window.clubActualId, rival = window.equipos.find(e => e.id == (soyL ? p.vId : p.lId)); return `<div class="bg-white/60 p-4 rounded-2xl border-2 border-dashed border-gray-200 mb-3 opacity-80"><div class="flex justify-between items-center mb-2"><span class="text-[8px] font-black text-gray-400 uppercase text-left">Fecha ${p.jornada}</span></div><div class="flex items-center justify-between gap-4"><div class="flex items-center gap-2 flex-1 text-left"><img src="${clubAct?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-6 h-6 rounded-full object-contain grayscale shadow-sm"><span class="oswald text-[10px] text-gray-500 font-bold">${clubAct?.nombre}</span></div><span class="oswald text-sm font-black text-gray-300 mx-2">VS</span><div class="flex items-center gap-2 flex-1 justify-end text-right"><span class="oswald text-[10px] text-gray-500 font-bold">${rival?.nombre}</span><img src="${rival?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-6 h-6 rounded-full object-contain grayscale shadow-sm"></div></div></div>`; }).join(''); }            
+            if (jugados.length > 0) { html += `<h4 class="oswald text-xs font-black uppercase text-pink-500 mb-3 mt-6 ml-2 text-left">Historial</h4>` + jugados.map(p => { const res = p.resultados[window.categoriaActual]; const soyL = p.lId == window.clubActualId, rival = window.equipos.find(e => e.id == (soyL ? p.vId : p.lId)); const miG = soyL ? (res.npL ? 'NP' : res.gL) : (res.npV ? 'NP' : res.gV), suG = soyL ? (res.npV ? 'NP' : res.gV) : (res.npL ? 'NP' : res.gL); let resC = miG > suG ? "bg-green-100" : (miG < suG ? "bg-red-100" : "bg-yellow-100"); return `<div class="bg-white p-4 rounded-2xl shadow-md border-2 border-white mb-3"><div class="flex justify-between items-center mb-2 text-left"><span class="text-[9px] font-black text-gray-400 uppercase">Fecha ${p.jornada}</span><span class="text-[8px] font-black ${soyL ? 'text-blue-500' : 'text-orange-500'} uppercase">${soyL ? 'LOCAL' : 'VISITANTE'}</span></div><div class="flex items-center justify-between gap-4"><div class="flex items-center gap-2 flex-1 text-left"><img src="${clubAct?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-8 h-8 rounded-full object-contain shadow-sm"><span class="oswald text-[10px] font-bold truncate">${clubAct?.nombre}</span></div><div class="flex items-center gap-2 px-3 py-1 rounded-lg font-black text-lg ${resC}"><span>${miG}</span><span>-</span><span>${suG}</span></div><div class="flex items-center gap-2 flex-1 justify-end text-right"><span class="oswald text-[10px] font-bold truncate">${rival?.nombre}</span><img src="${rival?.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-8 h-8 rounded-full object-contain shadow-sm"></div></div></div>`; }).join(''); }            
             container.innerHTML = html;        
         };
 
-        document.addEventListener('keydown', (e) => { if (e.key === "Escape") { cerrarCarnet(); cerrarDniModal(); closeConfirmModal(); cerrarDetallePartido(); cerrarNuevoPartido(); closeAuthModal(); } });
-        window.onscroll = function() { const btn = document.getElementById("btnVolverArriba"); if (btn) btn.style.display = (window.scrollY > 300) ? "block" : "none"; };
+        window.onload = () => { window.actualizarTodo(); };        
+        document.addEventListener('keydown', (e) => { if (e.key === "Escape") { window.cerrarCarnet(); window.cerrarDniModal(); window.closeConfirmModal(); window.cerrarDetallePartido(); window.cerrarNuevoPartido(); } });        
+        window.onscroll = function() { const btn = document.getElementById("btnVolverArriba"); if (btn) btn.style.display = (window.scrollY > 300) ? "block" : "none"; };    
     </script>
 </body>
 </html>
