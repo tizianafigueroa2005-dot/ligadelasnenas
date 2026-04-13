@@ -160,7 +160,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .zone-btn.inactive {
-            background-color: rgba(255,255,255,0.5);
+            background-color: rgba(255, 255, 255, 0.5);
             color: #4a3b4d;
         }
 
@@ -516,7 +516,11 @@
             window.partidos = data.partidos ? Object.entries(data.partidos).map(([key, val]) => ({...val, _fbKey: key})) : [];
             window.jugadoras = data.jugadoras ? Object.values(data.jugadoras) : [];
             window.identidadesVerificadas = data.identidades || {};
-            window.totalJornadas = data.totalJornadas || 1;
+            
+            window.totalJornadas = Math.max(1, data.totalJornadas || 1);
+            if(window.jornadaActualNum < 1) window.jornadaActualNum = 1;
+            if(window.jornadaActualNum > window.totalJornadas) window.jornadaActualNum = window.totalJornadas;
+
             actualizarAdminUI();
         });
 
@@ -576,7 +580,7 @@
 
         window.agregarCruceAlFixture = () => { 
             if(!window.isAdmin) return;
-            const l = parseInt(document.getElementById('equipoL').value), v = parseInt(document.getElementById('equipoV').value); if(!l || !v || l==v) return; set(push(ref(db, 'liga/partidos')), { id: Date.now(), jornada: window.jornadaActualNum, lId: l, vId: v, resultados: {} }); cerrarNuevoPartido(); 
+            const l = parseInt(document.getElementById('equipoL').value), v = parseInt(document.getElementById('equipoV').value); if(!l || !v || l==v) return; set(push(ref(db, 'liga/partidos')), { id: Date.now(), jornada: Math.max(1, window.jornadaActualNum), lId: l, vId: v, resultados: {} }); cerrarNuevoPartido(); 
         };
 
         window.guardarResultadosPartidoActual = () => { 
@@ -587,7 +591,7 @@
                 const gL = document.getElementById(`valL-${s}`).value, gV = document.getElementById(`valV-${s}`).value; 
                 const nL = document.getElementById(`npL-${s}`).checked, nV = document.getElementById(`npV-${s}`).checked; 
                 if(gL!==""||gV!==""||nL||nV) {
-                    const dbKey = cat.replace('/', '-'); // Firebase no permite "/" en claves
+                    const dbKey = cat.replace('/', '-');
                     res[dbKey] = { gL:parseInt(gL)||0, gV:parseInt(gV)||0, npL:nL, npV:nV }; 
                 }
             }); 
@@ -609,8 +613,9 @@
         window.quitarUltimaFecha = () => {
             if(!window.isAdmin || window.totalJornadas <= 1) return;
             openConfirmModal("Quitar Fecha", "¿Deseas eliminar la última pestaña de fecha? Esto no borra los partidos ya cargados.", () => {
-                set(ref(db, 'liga/totalJornadas'), window.totalJornadas - 1);
-                if(window.jornadaActualNum >= window.totalJornadas) seleccionarJornada(window.totalJornadas - 1);
+                const nuevoTotal = Math.max(1, window.totalJornadas - 1);
+                set(ref(db, 'liga/totalJornadas'), nuevoTotal);
+                if(window.jornadaActualNum > nuevoTotal) seleccionarJornada(nuevoTotal);
             });
         };
 
@@ -667,7 +672,11 @@
         function cerrarDetallePartido() { document.getElementById('match-detail-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
         function abrirNuevoPartido() { if(!window.isAdmin) return; actualizarSelectsEquipos(); document.getElementById('create-match-modal').style.display = 'flex'; }
         function cerrarNuevoPartido() { document.getElementById('create-match-modal').style.display = 'none'; }
-        function seleccionarJornada(n) { window.jornadaActualNum = n; renderPestañasFechas(); renderJornadasAgrupadas(); }
+        function seleccionarJornada(n) { 
+            window.jornadaActualNum = Math.max(1, n); 
+            renderPestañasFechas(); 
+            renderJornadasAgrupadas(); 
+        }
 
         function setZonaActual(z) {
             window.zonaActual = z;
@@ -824,10 +833,13 @@
                     }
                 }
 
+                // Ajuste para que nunca muestre Fecha 0 en las tarjetas de club
+                const jornadaDisplay = Math.max(1, p.jornada || 1);
+
                 return `
                 <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 ${res ? 'border-pink-500' : 'border-gray-200'} mb-2">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-[9px] font-black text-gray-400 uppercase">Fecha ${p.jornada}</span>
+                        <span class="text-[9px] font-black text-gray-400 uppercase">Fecha ${jornadaDisplay}</span>
                         <span class="text-[9px] font-black ${esLocal ? 'text-blue-500' : 'text-purple-500'} uppercase">${esLocal ? 'Local' : 'Visitante'}</span>
                     </div>
                     <div class="flex justify-between items-center">
