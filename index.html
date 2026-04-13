@@ -272,15 +272,15 @@
         </button>
 
         <div class="flex justify-between items-center max-w-md mx-auto leading-none">
-            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
+            <!-- Logos actualizados a logo.jpeg -->
+            <img src="logo.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
             <h1 class="oswald text-4xl font-black uppercase leading-none header-text tracking-tighter text-center">LA LIGA DE LAS<br>NENAS</h1>
-            <img src="LOGO.LIGADELASNENAS.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
+            <img src="logo.jpeg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
         </div>
         <div class="h-1.5 bg-black opacity-10 mt-4 mx-auto w-40 rounded-full shadow-inner"></div>
     </header>
 
     <main class="max-w-md mx-auto px-4 mt-4 text-center">
-        <!-- Contenedor con id para ajuste dinámico de columnas -->
         <div class="mb-8 leading-none" id="main-nav-tabs">
             <button onclick="switchView('posiciones', this)" class="tab-btn active rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -427,7 +427,10 @@
         </section>
     </main>
 
-    <button id="btnVolverArriba" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Ir al inicio"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></button>
+    <!-- Botón Volver Arriba -->
+    <button id="btnVolverArriba" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Ir al inicio">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
@@ -520,7 +523,8 @@
             showStatus("Subiendo escudo a la nube...");
             const url = await subirAInternet(window.logoClubTemporal);
             const r = push(ref(db, 'liga/equipos'));
-            set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: url || 'LOGO.LIGADELASNENAS.jpeg', zona: z });
+            // Default logo actualizado a logo.jpeg
+            set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: url || 'logo.jpeg', zona: z });
             document.getElementById('nombreEquipo').value = ""; window.resetFormLogo();
             showStatus("¡Equipo guardado con éxito!");
         };
@@ -570,6 +574,16 @@
         let fotoTemporal = null, fotoDniTemporal = null, logoClubTemporal = null;
         let clubActualId = null, categoriaActual = null, partidoEditandoId = null;
         let tipoFichajeActual = "jugadora";
+
+        // Lógica para mostrar/ocultar botón Volver Arriba
+        window.onscroll = function() {
+            const btn = document.getElementById("btnVolverArriba");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btn.style.display = "block";
+            } else {
+                btn.style.display = "none";
+            }
+        };
 
         function showStatus(msg, isError = false) { 
             const el = document.getElementById('status-message'); 
@@ -630,7 +644,8 @@
                     <td class="table-cell text-center text-gray-400 w-8 font-black">${index + 1}</td>
                     <td class="table-cell px-2">
                         <div class="flex items-center gap-2">
-                            <img src="${e.logo || 'LOGO.LIGADELASNENAS.jpeg'}" class="w-5 h-5 rounded-full object-contain bg-white border">
+                            <!-- Logo por defecto actualizado a logo.jpeg -->
+                            <img src="${e.logo || 'logo.jpeg'}" class="w-5 h-5 rounded-full object-contain bg-white border">
                             <span class="truncate uppercase oswald tracking-tight text-gray-700 font-bold">${e.nombre}</span>
                         </div>
                     </td>
@@ -678,7 +693,7 @@
         function previewLogoClub(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { logoClubTemporal = ev.target.result; document.getElementById('club-logo-preview').src = ev.target.result; document.getElementById('club-logo-preview').classList.remove('hidden'); document.getElementById('club-placeholder-logo').classList.add('hidden'); }; r.readAsDataURL(f); } }
         function resetFormFoto() { fotoTemporal=null; fotoDniTemporal=null; document.getElementById('image-preview').classList.add('hidden'); document.getElementById('placeholder-icon').classList.remove('hidden'); document.getElementById('dni-image-preview').classList.add('hidden'); }
         function resetFormLogo() { logoClubTemporal=null; document.getElementById('club-logo-preview').classList.add('hidden'); document.getElementById('club-placeholder-logo').classList.remove('hidden'); }
-        function verCarnet(id) { const j = jugadoras.find(p => p.id == id); const c = equipos.find(e => e.id == j.clubId); document.getElementById('id-card-render').innerHTML = `<div class="id-card"><div class="id-card-header"><img src="${c?.logo || ''}" class="w-8 h-8 bg-white rounded-full p-1"><span class="oswald text-xs ml-2">Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${j.foto || ''}"></div><div class="id-details"><div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div><div class="id-label">Club</div><div class="id-value text-pink-600">${c?.nombre}</div><div class="id-label">Cat/DNI</div><div class="id-value text-[10px]">${j.cat} / ${j.dni}</div></div></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; }
+        function verCarnet(id) { const j = jugadoras.find(p => p.id == id); const c = equipos.find(e => e.id == j.clubId); document.getElementById('id-card-render').innerHTML = `<div class="id-card"><div class="id-card-header"><img src="${c?.logo || 'logo.jpeg'}" class="w-8 h-8 bg-white rounded-full p-1"><span class="oswald text-xs ml-2">Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${j.foto || ''}"></div><div class="id-details"><div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div><div class="id-label">Club</div><div class="id-value text-pink-600">${c?.nombre}</div><div class="id-label">Cat/DNI</div><div class="id-value text-[10px]">${j.cat} / ${j.dni}</div></div></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; }
         function cambiarSeccionPlantel(s) { document.getElementById('tab-plantel-jugadoras').classList.toggle('active', s=='jugadoras'); document.getElementById('tab-plantel-partidos').classList.toggle('active', s=='partidos'); document.getElementById('contenedor-jugadoras-fichadas').classList.toggle('hidden', s!='jugadoras'); document.getElementById('contenedor-partidos-equipo').classList.toggle('hidden', s!='partidos'); }
         function verPlantelDetalle(cat) { categoriaActual = cat; document.getElementById('plantel-categoria-nombre').innerText = "CATEGORÍA " + cat; const js = jugadoras.filter(j => j.clubId == clubActualId && j.cat == cat); document.getElementById('contenedor-jugadoras-fichadas').innerHTML = js.map(j => `<div class="bg-white p-3 rounded-2xl mb-2 flex justify-between items-center shadow-sm"><div><b>${j.nombre}</b></div><button onclick="verCarnet(${j.id})">🪪</button></div>`).join(''); mostrarSubvista('subvista-plantel-detalle'); }
         function irACategoria(id, btn) { const el = document.getElementById(id); if(el) el.scrollIntoView({ behavior: 'smooth' }); }
@@ -691,8 +706,8 @@
             document.getElementById('modal-match-fecha').innerText = `Fecha ${p.jornada}`;
             document.getElementById('modal-match-nombre-l').innerText = l?.nombre;
             document.getElementById('modal-match-nombre-v').innerText = v?.nombre;
-            document.getElementById('modal-match-logo-l').innerHTML = `<img src="${l?.logo}" class="w-full h-full object-contain">`;
-            document.getElementById('modal-match-logo-v').innerHTML = `<img src="${v?.logo}" class="w-full h-full object-contain">`;
+            document.getElementById('modal-match-logo-l').innerHTML = `<img src="${l?.logo || 'logo.jpeg'}" class="w-full h-full object-contain">`;
+            document.getElementById('modal-match-logo-v').innerHTML = `<img src="${v?.logo || 'logo.jpeg'}" class="w-full h-full object-contain">`;
             let html = "";
             categorias.forEach(cat => {
                 const s = cat.replace('/','-');
