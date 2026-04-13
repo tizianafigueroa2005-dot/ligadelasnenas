@@ -272,7 +272,6 @@
         </button>
 
         <div class="flex justify-between items-center max-w-md mx-auto leading-none">
-            <!-- Logos actualizados coa nova ligazón directa -->
             <img src="https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
             <h1 class="oswald text-4xl font-black uppercase leading-none header-text tracking-tighter text-center">LA LIGA DE LAS<br>NENAS</h1>
             <img src="https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg" alt="Logo" class="w-16 h-16 bg-white rounded-full p-1 shadow-lg object-contain border-2 border-pink-300" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
@@ -322,12 +321,20 @@
                 <button onclick="setZonaActual('ZONA A')" id="btn-fixture-zona-a" class="zone-btn active">Zona A</button>
                 <button onclick="setZonaActual('ZONA B')" id="btn-fixture-zona-b" class="zone-btn inactive">Zona B</button>
             </div>
-            <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar mb-6" id="contenedor-pestañas-fechas"></div>
+            
+            <div class="flex items-center gap-3 mb-6">
+                <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar flex-1" id="contenedor-pestañas-fechas"></div>
+                <div class="admin-only flex gap-1 mb-4">
+                    <button onclick="quitarUltimaFecha()" class="bg-white/50 text-[#4a3b4d] w-8 h-8 rounded-full flex items-center justify-center font-black shadow-sm" title="Quitar última fecha">-</button>
+                    <button onclick="agregarNuevaFecha()" class="bg-white/50 text-[#4a3b4d] w-8 h-8 rounded-full flex items-center justify-center font-black shadow-sm" title="Agregar nueva fecha">+</button>
+                </div>
+            </div>
+
             <div class="flex items-center justify-between mb-8 px-1">
                 <button onclick="abrirEstadisticasFecha()" class="bg-yellow-300 text-[9px] font-black text-yellow-900 px-4 py-2.5 rounded-full shadow-sm uppercase tracking-tight">Estadísticas de la fecha</button>
                 <div class="flex gap-2 admin-only">
                     <button onclick="abrirNuevoPartido()" class="bg-red-600 text-white flex items-center gap-1.5 px-4 py-2.5 rounded-full shadow-md text-[9px] font-black uppercase"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Partido</button>
-                    <button onclick="eliminarJornadaActual()" class="text-gray-400 p-2 hover:text-red-500 transition-colors"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+                    <button onclick="eliminarJornadaActual()" class="text-gray-400 p-2 hover:text-red-500 transition-colors" title="Borrar partidos de esta fecha"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
                 </div>
             </div>
             <div id="contenedor-jornadas-historial" class="space-y-4 text-left min-h-[200px]"></div>
@@ -434,7 +441,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCqgo6mBCJRUFTjSMc2tpUkG-7siCGf7nE",
@@ -487,9 +494,11 @@
             if (window.isAdmin) {
                 document.body.classList.add('is-admin');
                 document.getElementById('btnLoginAdmin').style.display = 'none';
+                document.getElementById('btnLogoutAdmin').style.display = 'block';
             } else {
                 document.body.classList.remove('is-admin');
                 document.getElementById('btnLoginAdmin').style.display = 'block';
+                document.getElementById('btnLogoutAdmin').style.display = 'none';
             }
             actualizarTodo();
         }
@@ -508,7 +517,7 @@
         onValue(ref(db, 'liga'), (snap) => {
             const data = snap.val() || {};
             window.equipos = data.equipos ? Object.values(data.equipos) : [];
-            window.partidos = data.partidos ? Object.values(data.partidos) : [];
+            window.partidos = data.partidos ? Object.entries(data.partidos).map(([key, val]) => ({...val, _fbKey: key})) : [];
             window.jugadoras = data.jugadoras ? Object.values(data.jugadoras) : [];
             window.identidadesVerificadas = data.identidades || {};
             window.totalJornadas = data.totalJornadas || 1;
@@ -523,7 +532,6 @@
             showStatus("Subiendo escudo a la nube...");
             const url = await subirAInternet(window.logoClubTemporal);
             const r = push(ref(db, 'liga/equipos'));
-            // Logo por defecto: nova ligazón directa para asegurar visibilidade
             set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: url || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg', zona: z });
             document.getElementById('nombreEquipo').value = ""; window.resetFormLogo();
             showStatus("¡Equipo guardado con éxito!");
@@ -554,20 +562,83 @@
 
         window.borrarClubAction = (id) => { 
             if(!isAdmin) return;
-            openConfirmModal("Borrar Club", "¿Borrar club y todos sus datos?", () => { onValue(ref(db, 'liga/equipos'), (s) => { s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); }); }, {onlyOnce:true}); }); 
+            openConfirmModal("Borrar Club", "¿Borrar club y todos sus datos?", () => { 
+                get(ref(db, 'liga/equipos')).then(s => {
+                    s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/equipos/${c.key}`)); });
+                });
+            }); 
         };
+
         window.borrarJugadoraAction = (id) => { 
             if(!isAdmin) return;
-            openConfirmModal("Borrar Ficha", "¿Eliminar a esta persona?", () => { onValue(ref(db, 'liga/jugadoras'), (s) => { s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/jugadoras/${c.key}`)); }); }, {onlyOnce:true}); }); 
+            openConfirmModal("Borrar Ficha", "¿Eliminar a esta persona?", () => { 
+                get(ref(db, 'liga/jugadoras')).then(s => {
+                    s.forEach(c => { if(c.val().id == id) remove(ref(db, `liga/jugadoras/${c.key}`)); });
+                });
+            }); 
         };
+
         window.agregarCruceAlFixture = () => { 
             if(!isAdmin) return;
             const l = parseInt(document.getElementById('equipoL').value), v = parseInt(document.getElementById('equipoV').value); if(!l || !v || l==v) return; set(push(ref(db, 'liga/partidos')), { id: Date.now(), jornada: window.jornadaActualNum, lId: l, vId: v, resultados: {} }); cerrarNuevoPartido(); 
         };
+
         window.guardarResultadosPartidoActual = () => { 
             if(!isAdmin || !window.partidoEditandoId) return; 
-            let res = {}; window.categorias.forEach(cat => { const s = cat.replace('/','-'); const gL = document.getElementById(`valL-${s}`).value, gV = document.getElementById(`valV-${s}`).value; const nL = document.getElementById(`npL-${s}`).checked, nV = document.getElementById(`npV-${s}`).checked; if(gL!==""||gV!==""||nL||nV) res[cat] = { gL:parseInt(gL)||0, gV:parseInt(gV)||0, npL:nL, npV:nV }; }); onValue(ref(db, 'liga/partidos'), (s) => { s.forEach(c => { if(c.val().id == window.partidoEditandoId) update(ref(db, `liga/partidos/${c.key}`), { resultados: res }); }); }, {onlyOnce:true}); cerrarDetallePartido(); 
+            let res = {}; 
+            window.categorias.forEach(cat => { 
+                const s = cat.replace('/','-'); 
+                const gL = document.getElementById(`valL-${s}`).value, gV = document.getElementById(`valV-${s}`).value; 
+                const nL = document.getElementById(`npL-${s}`).checked, nV = document.getElementById(`npV-${s}`).checked; 
+                if(gL!==""||gV!==""||nL||nV) res[cat] = { gL:parseInt(gL)||0, gV:parseInt(gV)||0, npL:nL, npV:nV }; 
+            }); 
+            
+            const partido = partidos.find(p => p.id == window.partidoEditandoId);
+            if(partido && partido._fbKey) {
+                update(ref(db, `liga/partidos/${partido._fbKey}`), { resultados: res });
+            }
+            cerrarDetallePartido(); 
         };
+
+        // Funciones para gestionar el número de jornadas
+        window.agregarNuevaFecha = () => {
+            if(!isAdmin) return;
+            set(ref(db, 'liga/totalJornadas'), totalJornadas + 1);
+            showStatus("Nueva fecha habilitada");
+        };
+
+        window.quitarUltimaFecha = () => {
+            if(!isAdmin || totalJornadas <= 1) return;
+            openConfirmModal("Quitar Fecha", "¿Deseas eliminar la última pestaña de fecha? Esto no borra los partidos ya cargados.", () => {
+                set(ref(db, 'liga/totalJornadas'), totalJornadas - 1);
+                if(jornadaActualNum >= totalJornadas) seleccionarJornada(totalJornadas - 1);
+            });
+        };
+
+        window.eliminarJornadaActual = () => {
+            if(!isAdmin) return;
+            openConfirmModal("Borrar Fecha", `¿Eliminar todos los partidos de la Fecha ${jornadaActualNum} (${zonaActual})?`, () => {
+                const partidosABorrar = partidos.filter(p => {
+                    const l = equipos.find(e => e.id == p.lId);
+                    return p.jornada == jornadaActualNum && (l?.zona || 'ZONA A') === zonaActual;
+                });
+                
+                partidosABorrar.forEach(p => {
+                    if(p._fbKey) remove(ref(db, `liga/partidos/${p._fbKey}`));
+                });
+                showStatus("Jornada eliminada");
+            });
+        };
+
+        window.borrarPartidoAction = (id) => {
+            if(!isAdmin) return;
+            const p = partidos.find(x => x.id == id);
+            if(p && p._fbKey) {
+                remove(ref(db, `liga/partidos/${p._fbKey}`));
+                showStatus("Partido eliminado");
+            }
+        };
+
     </script>
 
     <script>
@@ -602,10 +673,14 @@
 
         function setZonaActual(z) {
             window.zonaActual = z;
-            document.getElementById('btn-tablas-zona-a').className = z === 'ZONA A' ? 'zone-btn active' : 'zone-btn inactive';
-            document.getElementById('btn-tablas-zona-b').className = z === 'ZONA B' ? 'zone-btn active' : 'zone-btn inactive';
-            document.getElementById('btn-fixture-zona-a').className = z === 'ZONA A' ? 'zone-btn active' : 'zone-btn inactive';
-            document.getElementById('btn-fixture-zona-b').className = z === 'ZONA B' ? 'zone-btn active' : 'zone-btn inactive';
+            const updateBtn = (id, active) => {
+                const el = document.getElementById(id);
+                if (el) el.className = active ? 'zone-btn active' : 'zone-btn inactive';
+            };
+            updateBtn('btn-tablas-zona-a', z === 'ZONA A');
+            updateBtn('btn-tablas-zona-b', z === 'ZONA B');
+            updateBtn('btn-fixture-zona-a', z === 'ZONA A');
+            updateBtn('btn-fixture-zona-b', z === 'ZONA B');
             actualizarTodo();
         }
 
@@ -644,7 +719,6 @@
                     <td class="table-cell text-center text-gray-400 w-8 font-black">${index + 1}</td>
                     <td class="table-cell px-2">
                         <div class="flex items-center gap-2">
-                            <!-- Logo por defecto actualizado -->
                             <img src="${e.logo || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg'}" class="w-5 h-5 rounded-full object-contain bg-white border">
                             <span class="truncate uppercase oswald tracking-tight text-gray-700 font-bold">${e.nombre}</span>
                         </div>
@@ -660,7 +734,15 @@
             return `<div id="${id}" class="mb-10"><h2 class="oswald text-2xl font-black uppercase text-white mb-4">${t}</h2><div class="table-card"><table class="w-full text-left"><thead><tr class="bg-[#4a3b4d] text-white text-[9px] uppercase"><th class="p-3">#</th><th>Equipo</th><th class="text-center">PTS</th><th class="text-center">PJ</th><th class="text-center">G</th><th class="text-center">E</th><th class="text-center">P</th><th class="text-center">GF/GC</th><th class="text-center">DG</th></tr></thead><tbody>${filas}</tbody></table></div></div>`;
         }
 
-        function renderPestañasFechas() { const c = document.getElementById('contenedor-pestañas-fechas'); if(!c) return; let h = ""; for(let i=1; i <= totalJornadas; i++) h += `<div onclick="seleccionarJornada(${i})" class="date-tab ${jornadaActualNum === i ? 'active' : ''}">${i}° Fecha</div>`; c.innerHTML = h; }
+        function renderPestañasFechas() { 
+            const c = document.getElementById('contenedor-pestañas-fechas'); 
+            if(!c) return; 
+            let h = ""; 
+            for(let i=1; i <= totalJornadas; i++) {
+                h += `<div onclick="seleccionarJornada(${i})" class="date-tab ${jornadaActualNum === i ? 'active' : ''}">${i}° Fecha</div>`; 
+            }
+            c.innerHTML = h; 
+        }
         
         function renderJornadasAgrupadas() { 
             const c = document.getElementById('contenedor-jornadas-historial'); 
@@ -670,7 +752,16 @@
             });
             c.innerHTML = f.map(p => { 
                 const l=equipos.find(e=>e.id==p.lId), v=equipos.find(e=>e.id==p.vId); 
-                return `<div onclick="abrirDetallePartido(${p.id})" class="bg-white rounded-3xl p-6 mb-3 shadow-md flex items-center justify-between border-l-4 border-pink-400"><div class="flex-1 text-center font-bold text-xs uppercase">${l?.nombre}</div><span class="oswald text-xl text-gray-200 px-4">VS</span><div class="flex-1 text-center font-bold text-xs uppercase">${v?.nombre}</div></div>`; 
+                return `
+                <div class="bg-white rounded-3xl p-6 mb-3 shadow-md flex items-center justify-between border-l-4 border-pink-400 group relative">
+                    <div onclick="abrirDetallePartido(${p.id})" class="flex-1 text-center font-bold text-xs uppercase cursor-pointer">${l?.nombre}</div>
+                    <span class="oswald text-xl text-gray-200 px-4">VS</span>
+                    <div onclick="abrirDetallePartido(${p.id})" class="flex-1 text-center font-bold text-xs uppercase cursor-pointer">${v?.nombre}</div>
+                    
+                    <button onclick="event.stopPropagation(); borrarPartidoAction('${p.id}')" class="admin-only absolute -right-2 -top-2 bg-white text-red-500 p-1.5 rounded-full shadow-lg border border-gray-100 hidden group-hover:block active:scale-90 transition-all">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    </button>
+                </div>`; 
             }).join(''); 
             if(f.length === 0) c.innerHTML = `<p class="text-center text-gray-500 font-bold uppercase py-10">No hay partidos registrados en esta fecha.</p>`;
         }
