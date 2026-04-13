@@ -465,6 +465,9 @@
         window.LOGO_PELLERANO = "https://i.ibb.co/8L715bFq/pellerano.jpg";
         window.LOGO_RIVER = "https://i.ibb.co/k2CJPGQ6/river.jpg";
         window.LOGO_SAN_JOSE = "https://i.ibb.co/MD3Pcp30/sanjose.jpg";
+        window.LOGO_CHINGOLO = "https://i.ibb.co/xKdmxjzT/chingolo.jpg";
+        window.LOGO_JARDIN = "https://i.ibb.co/KxgpD6Xh/jardin.jpg";
+        window.LOGO_BALLARATI = "https://i.ibb.co/MxYthQpM/ballarati.jpg";
         window.LOGO_DEFAULT = "https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg";
 
         window.equipos = []; window.partidos = []; window.jugadoras = [];
@@ -560,6 +563,9 @@
                 else if(nombreUpper.includes("PELLERANO")) logoFinal = window.LOGO_PELLERANO;
                 else if(nombreUpper.includes("RIVER")) logoFinal = window.LOGO_RIVER;
                 else if(nombreUpper.includes("SAN JOSE")) logoFinal = window.LOGO_SAN_JOSE;
+                else if(nombreUpper.includes("CHINGOLO")) logoFinal = window.LOGO_CHINGOLO;
+                else if(nombreUpper.includes("JARDIN")) logoFinal = window.LOGO_JARDIN;
+                else if(nombreUpper.includes("BALLARATI")) logoFinal = window.LOGO_BALLARATI;
                 else logoFinal = window.LOGO_DEFAULT;
             }
 
@@ -703,7 +709,10 @@
                 window.LOGO_MALVINAS,
                 window.LOGO_PELLERANO,
                 window.LOGO_RIVER,
-                window.LOGO_SAN_JOSE
+                window.LOGO_SAN_JOSE,
+                window.LOGO_CHINGOLO,
+                window.LOGO_JARDIN,
+                window.LOGO_BALLARATI
             ];
             if(e.logo && e.logo !== window.LOGO_DEFAULT && !logosOficiales.includes(e.logo)) return e.logo;
             
@@ -719,6 +728,9 @@
             if(nombreUpper.includes("PELLERANO")) return window.LOGO_PELLERANO;
             if(nombreUpper.includes("RIVER")) return window.LOGO_RIVER;
             if(nombreUpper.includes("SAN JOSE")) return window.LOGO_SAN_JOSE;
+            if(nombreUpper.includes("CHINGOLO")) return window.LOGO_CHINGOLO;
+            if(nombreUpper.includes("JARDIN")) return window.LOGO_JARDIN;
+            if(nombreUpper.includes("BALLARATI")) return window.LOGO_BALLARATI;
             
             return e.logo || window.LOGO_DEFAULT;
         }
