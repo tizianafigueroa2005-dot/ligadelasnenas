@@ -171,6 +171,7 @@
 </head>
 <body class="pb-20">
 
+    <!-- Modal Acceso Admin -->
     <div id="admin-modal">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative" onclick="event.stopPropagation()">
             <h3 class="oswald text-2xl font-black text-gray-800 uppercase mb-6 text-center tracking-tight">Acceso Administrador</h3>
@@ -184,6 +185,7 @@
         </div>
     </div>
 
+    <!-- Modal Confirmación -->
     <div id="confirm-modal">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center" onclick="event.stopPropagation()">
             <h3 id="confirm-title" class="oswald text-2xl font-bold uppercase text-gray-800 mb-2">¿Estás seguro?</h3>
@@ -195,6 +197,7 @@
         </div>
     </div>
 
+    <!-- Modal Crear Partido -->
     <div id="create-match-modal">
         <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl relative" onclick="event.stopPropagation()">
             <h3 class="oswald text-2xl font-black text-gray-800 uppercase mb-6 text-center tracking-tight">Programar Partido</h3>
@@ -215,6 +218,7 @@
         </div>
     </div>
 
+    <!-- Modal Resultados Partido -->
     <div id="match-detail-modal">
         <div class="bg-white rounded-[2.5rem] p-6 max-w-md w-full shadow-2xl relative max-h-[90vh] overflow-y-auto no-scrollbar" onclick="event.stopPropagation()">
             <button onclick="cerrarDetallePartido()" class="absolute top-6 right-6 text-gray-300 hover:text-gray-600 transition-colors">
@@ -239,6 +243,7 @@
         </div>
     </div>
 
+    <!-- Modal Credencial -->
     <div id="modal-container" onclick="cerrarCarnet()">
         <div class="p-2 relative" onclick="event.stopPropagation()">
             <button onclick="cerrarCarnet()" class="absolute -top-12 right-0 text-white font-bold text-4xl bg-black/40 w-12 h-12 rounded-full flex items-center justify-center">×</button>
@@ -247,6 +252,7 @@
         </div>
     </div>
 
+    <!-- Modal Visor DNI -->
     <div id="dni-modal-container" onclick="cerrarDniModal()">
         <div class="p-4 bg-white rounded-3xl max-w-[90vw] w-full" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-4 text-left">
@@ -277,6 +283,7 @@
     </header>
 
     <main class="max-w-md mx-auto px-4 mt-4 text-center">
+        <!-- Navegación Principal -->
         <div class="mb-8 leading-none" id="main-nav-tabs">
             <button onclick="switchView('posiciones', this)" class="tab-btn active rounded-2xl py-4 flex flex-col items-center justify-center gap-1 shadow-sm">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -296,6 +303,7 @@
             </button>
         </div>
 
+        <!-- Vista Posiciones -->
         <section id="vista-posiciones" class="view-section active">
             <div class="flex justify-center gap-2 mb-4">
                 <button onclick="setZonaActual('ZONA A')" id="btn-tablas-zona-a" class="zone-btn active">Zona A</button>
@@ -312,6 +320,7 @@
             <div id="tablas-dinamicas" class="space-y-12 text-left"></div>
         </section>
 
+        <!-- Vista Fixture -->
         <section id="vista-fechas" class="view-section leading-none">
             <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e] tracking-tight">Fixture y Resultados</h2>
             <div class="flex justify-center gap-2 mb-6">
@@ -337,9 +346,11 @@
             <div id="contenedor-jornadas-historial" class="space-y-4 text-left min-h-[200px]"></div>
         </section>
 
+        <!-- Vista Equipos -->
         <section id="vista-equipos" class="view-section leading-none">
             <div id="subvista-equipos-lista" class="sub-view active">
                 <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e]">Clubes Registrados</h2>
+                <!-- Panel Agregar Club -->
                 <div class="admin-only bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center">
                     <div class="flex flex-col items-center mb-6">
                         <div class="relative group">
@@ -362,6 +373,7 @@
                 <div id="lista-clubes-botones" class="grid grid-cols-1 gap-4 text-left"></div>
             </div>
 
+            <!-- Subvista Club Detalle (Categorías) -->
             <div id="subvista-club-detalle" class="sub-view text-left">
                 <button onclick="mostrarSubvista('subvista-equipos-lista')" class="flex items-center gap-1 text-pink-700 font-black mb-6 uppercase text-[11px] bg-white/50 px-4 py-2 rounded-full shadow-sm">Volver a Clubes</button>
                 <div class="bg-[#4a3b4d] rounded-3xl p-6 text-white mb-8 flex justify-between items-center shadow-xl border-b-4 border-pink-500">
@@ -371,6 +383,7 @@
                 <div id="lista-categorias-botones" class="grid grid-cols-1 gap-3"></div>
             </div>
 
+            <!-- Subvista Plantel Detalle -->
             <div id="subvista-plantel-detalle" class="sub-view text-left">
                 <button onclick="mostrarSubvista('subvista-club-detalle')" class="flex items-center gap-1 text-pink-700 font-black mb-6 uppercase text-[11px] bg-white/50 px-4 py-2 rounded-full shadow-sm">Volver a Categorías</button>
                 <div class="bg-white rounded-3xl p-5 border-b-8 border-pink-500 mb-8 shadow-xl text-center">
@@ -386,6 +399,7 @@
             </div>
         </section>
 
+        <!-- Vista Fichar (Admin Only) -->
         <section id="vista-fichar" class="view-section admin-only leading-none">
             <h2 class="oswald text-3xl font-bold uppercase mb-6 text-[#2d1b2e] tracking-tight">Fichaje Oficial</h2>
             <div class="bg-white/40 p-6 rounded-3xl shadow-lg border border-white/30 mb-10 text-center">
@@ -454,6 +468,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Logos Oficiales
         window.LOGO_6_MARZO = "https://i.ibb.co/R46Kpjn1/6marzo.jpg";
         window.LOGO_CICLON = "https://i.ibb.co/4ZwZ04yP/ciclon.jpg";
         window.LOGO_CAMPOS = "https://i.ibb.co/5x5bLPdx/campos.jpg";
@@ -471,6 +486,7 @@
         window.LOGO_BIBLIOTECA = "https://i.ibb.co/5XS65sxb/biblio.jpg";
         window.LOGO_MARPLATENSE = "https://i.ibb.co/ksz8XYtS/marpla.jpg";
         window.LOGO_LA_JAULA = "https://i.ibb.co/B5jSbWmH/lajaula.jpg";
+        window.LOGO_ROCA = "https://i.ibb.co/bgY1qtNJ/roca.jpg";
         window.LOGO_DEFAULT = "https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg";
 
         window.equipos = []; window.partidos = []; window.jugadoras = [];
@@ -572,6 +588,7 @@
                 else if(nombreUpper.includes("BIBLIOTECA")) logoFinal = window.LOGO_BIBLIOTECA;
                 else if(nombreUpper.includes("MARPLATENSE")) logoFinal = window.LOGO_MARPLATENSE;
                 else if(nombreUpper.includes("LA JAULA")) logoFinal = window.LOGO_LA_JAULA;
+                else if(nombreUpper.includes("ROCA")) logoFinal = window.LOGO_ROCA;
                 else logoFinal = window.LOGO_DEFAULT;
             }
 
@@ -721,7 +738,8 @@
                 window.LOGO_BALLARATI,
                 window.LOGO_BIBLIOTECA,
                 window.LOGO_MARPLATENSE,
-                window.LOGO_LA_JAULA
+                window.LOGO_LA_JAULA,
+                window.LOGO_ROCA
             ];
             if(e.logo && e.logo !== window.LOGO_DEFAULT && !logosOficiales.includes(e.logo)) return e.logo;
             
@@ -743,6 +761,7 @@
             if(nombreUpper.includes("BIBLIOTECA")) return window.LOGO_BIBLIOTECA;
             if(nombreUpper.includes("MARPLATENSE")) return window.LOGO_MARPLATENSE;
             if(nombreUpper.includes("LA JAULA")) return window.LOGO_LA_JAULA;
+            if(nombreUpper.includes("ROCA")) return window.LOGO_ROCA;
             
             return e.logo || window.LOGO_DEFAULT;
         }
