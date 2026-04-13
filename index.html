@@ -470,6 +470,7 @@
         window.LOGO_BALLARATI = "https://i.ibb.co/MxYthQpM/ballarati.jpg";
         window.LOGO_BIBLIOTECA = "https://i.ibb.co/5XS65sxb/biblio.jpg";
         window.LOGO_MARPLATENSE = "https://i.ibb.co/ksz8XYtS/marpla.jpg";
+        window.LOGO_LA_JAULA = "https://i.ibb.co/B5jSbWmH/lajaula.jpg";
         window.LOGO_DEFAULT = "https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg";
 
         window.equipos = []; window.partidos = []; window.jugadoras = [];
@@ -570,6 +571,7 @@
                 else if(nombreUpper.includes("BALLARATI")) logoFinal = window.LOGO_BALLARATI;
                 else if(nombreUpper.includes("BIBLIOTECA")) logoFinal = window.LOGO_BIBLIOTECA;
                 else if(nombreUpper.includes("MARPLATENSE")) logoFinal = window.LOGO_MARPLATENSE;
+                else if(nombreUpper.includes("LA JAULA")) logoFinal = window.LOGO_LA_JAULA;
                 else logoFinal = window.LOGO_DEFAULT;
             }
 
@@ -718,7 +720,8 @@
                 window.LOGO_JARDIN,
                 window.LOGO_BALLARATI,
                 window.LOGO_BIBLIOTECA,
-                window.LOGO_MARPLATENSE
+                window.LOGO_MARPLATENSE,
+                window.LOGO_LA_JAULA
             ];
             if(e.logo && e.logo !== window.LOGO_DEFAULT && !logosOficiales.includes(e.logo)) return e.logo;
             
@@ -739,6 +742,7 @@
             if(nombreUpper.includes("BALLARATI")) return window.LOGO_BALLARATI;
             if(nombreUpper.includes("BIBLIOTECA")) return window.LOGO_BIBLIOTECA;
             if(nombreUpper.includes("MARPLATENSE")) return window.LOGO_MARPLATENSE;
+            if(nombreUpper.includes("LA JAULA")) return window.LOGO_LA_JAULA;
             
             return e.logo || window.LOGO_DEFAULT;
         }
