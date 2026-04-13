@@ -572,8 +572,8 @@
         function renderTablasStandings() {
             const container = document.getElementById('tablas-dinamicas');
             if (!container) return;
-            container.innerHTML = `<h3 class="oswald text-center text-pink-600 font-bold uppercase tracking-widest text-xl mb-4">${window.zonaActual}</h3>`;
-            container.innerHTML += generarHtmlTabla("cat-general", "Clasificación General", calcularEstadisticas(null));
+            // Se quita el subtitulo que indicaba la zona
+            container.innerHTML = generarHtmlTabla("cat-general", "Clasificación General", calcularEstadisticas(null));
             categorias.forEach(cat => { container.innerHTML += generarHtmlTabla("cat-" + cat.replace('/', ''), `Categoría ${cat}`, calcularEstadisticas(cat)); });
         }
 
