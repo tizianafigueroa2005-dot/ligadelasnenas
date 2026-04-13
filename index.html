@@ -880,10 +880,16 @@
             c.innerHTML = f.map(p => { 
                 const l=window.equipos.find(e=>e.id==p.lId), v=window.equipos.find(e=>e.id==p.vId); 
                 return `
-                <div class="bg-white rounded-3xl p-6 mb-3 shadow-md flex items-center justify-between border-l-4 border-pink-400 group relative">
-                    <div onclick="abrirDetallePartido(${p.id})" class="flex-1 text-center font-bold text-xs uppercase cursor-pointer">${l?.nombre}</div>
-                    <span class="oswald text-xl text-gray-200 px-4">VS</span>
-                    <div onclick="abrirDetallePartido(${p.id})" class="flex-1 text-center font-bold text-xs uppercase cursor-pointer">${v?.nombre}</div>
+                <div class="bg-white rounded-3xl p-4 mb-3 shadow-md flex items-center justify-between border-l-4 border-pink-400 group relative">
+                    <div onclick="abrirDetallePartido(${p.id})" class="flex-1 flex flex-col items-center gap-1 cursor-pointer">
+                        <img src="${getLogoCorrecto(l)}" class="w-8 h-8 object-contain">
+                        <span class="font-bold text-[10px] uppercase text-center leading-tight">${l?.nombre}</span>
+                    </div>
+                    <span class="oswald text-lg text-gray-200 px-2">VS</span>
+                    <div onclick="abrirDetallePartido(${p.id})" class="flex-1 flex flex-col items-center gap-1 cursor-pointer">
+                        <img src="${getLogoCorrecto(v)}" class="w-8 h-8 object-contain">
+                        <span class="font-bold text-[10px] uppercase text-center leading-tight">${v?.nombre}</span>
+                    </div>
                     
                     <button onclick="event.stopPropagation(); borrarPartidoAction('${p.id}')" class="admin-only absolute -right-2 -top-2 bg-white text-red-500 p-1.5 rounded-full shadow-lg border border-gray-100 hidden group-hover:block active:scale-90 transition-all">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
