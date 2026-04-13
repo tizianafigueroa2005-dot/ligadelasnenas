@@ -160,7 +160,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .zone-btn.inactive {
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: rgba(255,255,255,0.5);
             color: #4a3b4d;
         }
 
@@ -454,6 +454,19 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        window.LOGO_6_MARZO = "https://i.ibb.co/R46Kpjn1/6marzo.jpg";
+        window.LOGO_CICLON = "https://i.ibb.co/4ZwZ04yP/ciclon.jpg";
+        window.LOGO_CAMPOS = "https://i.ibb.co/5x5bLPdx/campos.jpg";
+        window.LOGO_EL_MASTIL = "https://i.ibb.co/zVq35Js0/mastil.jpg";
+        window.LOGO_DARWIN = "https://i.ibb.co/67HWsQL5/darwin.jpg";
+        window.LOGO_FORTALEZA = "https://i.ibb.co/jvW3KtrH/fortaleza.jpg";
+        window.LOGO_AMISTAD = "https://i.ibb.co/jPSQYXCp/amistad.jpg";
+        window.LOGO_MALVINAS = "https://i.ibb.co/Y4TRJ5FW/malvinas.jpg";
+        window.LOGO_PELLERANO = "https://i.ibb.co/8L715bFq/pellerano.jpg";
+        window.LOGO_RIVER = "https://i.ibb.co/k2CJPGQ6/river.jpg";
+        window.LOGO_SAN_JOSE = "https://i.ibb.co/MD3Pcp30/sanjose.jpg";
+        window.LOGO_DEFAULT = "https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg";
+
         window.equipos = []; window.partidos = []; window.jugadoras = [];
         window.identidadesVerificadas = {}; window.jornadaActualNum = 1;
         window.totalJornadas = 1; window.categorias = ["2011/12", "2013/14", "2015/16", "2017/18", "2019/20"];
@@ -532,7 +545,25 @@
             showStatus("Subiendo escudo a la nube...");
             const url = await subirAInternet(window.logoClubTemporal);
             const r = push(ref(db, 'liga/equipos'));
-            set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: url || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg', zona: z });
+            
+            let logoFinal = url;
+            if(!logoFinal) {
+                const nombreUpper = n.toUpperCase();
+                if(nombreUpper.includes("6 DE MARZO")) logoFinal = window.LOGO_6_MARZO;
+                else if(nombreUpper.includes("CICLON")) logoFinal = window.LOGO_CICLON;
+                else if(nombreUpper.includes("CAMPOS")) logoFinal = window.LOGO_CAMPOS;
+                else if(nombreUpper.includes("EL MASTIL")) logoFinal = window.LOGO_EL_MASTIL;
+                else if(nombreUpper.includes("DARWIN")) logoFinal = window.LOGO_DARWIN;
+                else if(nombreUpper.includes("FORTALEZA")) logoFinal = window.LOGO_FORTALEZA;
+                else if(nombreUpper.includes("AMISTAD")) logoFinal = window.LOGO_AMISTAD;
+                else if(nombreUpper.includes("MALVINAS")) logoFinal = window.LOGO_MALVINAS;
+                else if(nombreUpper.includes("PELLERANO")) logoFinal = window.LOGO_PELLERANO;
+                else if(nombreUpper.includes("RIVER")) logoFinal = window.LOGO_RIVER;
+                else if(nombreUpper.includes("SAN JOSE")) logoFinal = window.LOGO_SAN_JOSE;
+                else logoFinal = window.LOGO_DEFAULT;
+            }
+
+            set(r, { id: Date.now(), nombre: n.toUpperCase(), logo: logoFinal, zona: z });
             document.getElementById('nombreEquipo').value = ""; window.resetFormLogo();
             showStatus("¡Equipo guardado con éxito!");
         };
@@ -659,6 +690,39 @@
             }
         };
 
+        function getLogoCorrecto(e) {
+            if(!e) return window.LOGO_DEFAULT;
+            const logosOficiales = [
+                window.LOGO_6_MARZO, 
+                window.LOGO_CICLON, 
+                window.LOGO_CAMPOS, 
+                window.LOGO_EL_MASTIL, 
+                window.LOGO_DARWIN, 
+                window.LOGO_FORTALEZA,
+                window.LOGO_AMISTAD,
+                window.LOGO_MALVINAS,
+                window.LOGO_PELLERANO,
+                window.LOGO_RIVER,
+                window.LOGO_SAN_JOSE
+            ];
+            if(e.logo && e.logo !== window.LOGO_DEFAULT && !logosOficiales.includes(e.logo)) return e.logo;
+            
+            const nombreUpper = (e.nombre || "").toUpperCase();
+            if(nombreUpper.includes("6 DE MARZO")) return window.LOGO_6_MARZO;
+            if(nombreUpper.includes("CICLON")) return window.LOGO_CICLON;
+            if(nombreUpper.includes("CAMPOS")) return window.LOGO_CAMPOS;
+            if(nombreUpper.includes("EL MASTIL")) return window.LOGO_EL_MASTIL;
+            if(nombreUpper.includes("DARWIN")) return window.LOGO_DARWIN;
+            if(nombreUpper.includes("FORTALEZA")) return window.LOGO_FORTALEZA;
+            if(nombreUpper.includes("AMISTAD")) return window.LOGO_AMISTAD;
+            if(nombreUpper.includes("MALVINAS")) return window.LOGO_MALVINAS;
+            if(nombreUpper.includes("PELLERANO")) return window.LOGO_PELLERANO;
+            if(nombreUpper.includes("RIVER")) return window.LOGO_RIVER;
+            if(nombreUpper.includes("SAN JOSE")) return window.LOGO_SAN_JOSE;
+            
+            return e.logo || window.LOGO_DEFAULT;
+        }
+
         function showStatus(msg, isError = false) { 
             const el = document.getElementById('status-message'); 
             el.innerText = msg; el.style.backgroundColor = isError ? '#ef4444' : '#10b981'; 
@@ -693,7 +757,7 @@
 
         function calcularEstadisticas(cF) {
              const equiposZona = window.equipos.filter(e => (e.zona || 'ZONA A') === window.zonaActual);
-             let stats = equiposZona.map(e => ({ id: e.id, nombre: e.nombre, logo: e.logo, pts: 0, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0 }));
+             let stats = equiposZona.map(e => ({ id: e.id, nombre: e.nombre, logo: getLogoCorrecto(e), pts: 0, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0 }));
              window.partidos.forEach(p => {
                  window.categorias.forEach(cat => {
                     if (cF && cF !== cat) return;
@@ -727,7 +791,7 @@
                     <td class="table-cell text-center text-gray-400 w-8 font-black">${index + 1}</td>
                     <td class="table-cell px-2">
                         <div class="flex items-center gap-2">
-                            <img src="${e.logo || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg'}" class="w-5 h-5 rounded-full object-contain bg-white border">
+                            <img src="${e.logo}" class="w-5 h-5 rounded-full object-contain bg-white border">
                             <span class="truncate uppercase oswald tracking-tight text-gray-700 font-bold">${e.nombre}</span>
                         </div>
                     </td>
@@ -777,14 +841,14 @@
         function renderEquiposList() { 
             const c = document.getElementById('lista-clubes-botones'); 
             if(!c) return; 
-            c.innerHTML = window.equipos.map(e => `<div class="bg-white p-4 rounded-3xl mb-2 flex justify-between items-center shadow-sm"><div onclick="verCategoriasClub(${e.id})" class="flex items-center gap-3"><img src="${e.logo || ''}" class="w-10 h-10 object-contain"><div class="flex flex-col"><span class="oswald font-bold uppercase">${e.nombre}</span><span class="text-[8px] font-black text-pink-500 uppercase">${e.zona || 'ZONA A'}</span></div></div><button onclick="borrarClubAction(${e.id})" class="admin-only text-red-500 p-2">🗑️</button></div>`).join(''); 
+            c.innerHTML = window.equipos.map(e => `<div class="bg-white p-4 rounded-3xl mb-2 flex justify-between items-center shadow-sm"><div onclick="verCategoriasClub(${e.id})" class="flex items-center gap-3"><img src="${getLogoCorrecto(e)}" class="w-10 h-10 object-contain"><div class="flex flex-col"><span class="oswald font-bold uppercase">${e.nombre}</span><span class="text-[8px] font-black text-pink-500 uppercase">${e.zona || 'ZONA A'}</span></div></div><button onclick="borrarClubAction(${e.id})" class="admin-only text-red-500 p-2">🗑️</button></div>`).join(''); 
         }
 
         function verCategoriasClub(id) { 
             clubActualId = id; 
             const c = window.equipos.find(e => e.id == id); 
             document.getElementById('detalle-club-nombre').innerText = c.nombre; 
-            document.getElementById('detalle-club-escudo').innerHTML = `<img src="${c.logo}" class="w-14 h-14 object-contain">`; 
+            document.getElementById('detalle-club-escudo').innerHTML = `<img src="${getLogoCorrecto(c)}" class="w-14 h-14 object-contain">`; 
             document.getElementById('lista-categorias-botones').innerHTML = window.categorias.map(cat => `<button onclick="verPlantelDetalle('${cat}')" class="bg-white p-4 rounded-2xl mb-2 w-full flex justify-between font-bold uppercase"><span>${cat}</span><span>→</span></button>`).join(''); 
             mostrarSubvista('subvista-club-detalle'); 
         }
@@ -833,7 +897,6 @@
                     }
                 }
 
-                // Ajuste para que nunca muestre Fecha 0 en las tarjetas de club
                 const jornadaDisplay = Math.max(1, p.jornada || 1);
 
                 return `
@@ -844,7 +907,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2">
-                            <img src="${rival?.logo || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg'}" class="w-6 h-6 object-contain">
+                            <img src="${getLogoCorrecto(rival)}" class="w-6 h-6 object-contain">
                             <span class="oswald text-sm font-bold uppercase truncate max-w-[120px]">${rival?.nombre}</span>
                         </div>
                         <div class="text-sm">${resultText}</div>
@@ -864,7 +927,7 @@
         function previewLogoClub(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { logoClubTemporal = ev.target.result; document.getElementById('club-logo-preview').src = ev.target.result; document.getElementById('club-logo-preview').classList.remove('hidden'); document.getElementById('club-placeholder-logo').classList.add('hidden'); }; r.readAsDataURL(f); } }
         function resetFormFoto() { fotoTemporal=null; fotoDniTemporal=null; document.getElementById('image-preview').classList.add('hidden'); document.getElementById('placeholder-icon').classList.remove('hidden'); document.getElementById('dni-image-preview').classList.add('hidden'); }
         function resetFormLogo() { logoClubTemporal=null; document.getElementById('club-logo-preview').classList.add('hidden'); document.getElementById('club-placeholder-logo').classList.remove('hidden'); }
-        function verCarnet(id) { const j = window.jugadoras.find(p => p.id == id); const c = window.equipos.find(e => e.id == j.clubId); document.getElementById('id-card-render').innerHTML = `<div class="id-card"><div class="id-card-header"><img src="${c?.logo || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg'}" class="w-8 h-8 bg-white rounded-full p-1"><span class="oswald text-xs ml-2">Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${j.foto || ''}"></div><div class="id-details"><div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div><div class="id-label">Club</div><div class="id-value text-pink-600">${c?.nombre}</div><div class="id-label">Cat/DNI</div><div class="id-value text-[10px]">${j.cat} / ${j.dni}</div></div></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; }
+        function verCarnet(id) { const j = window.jugadoras.find(p => p.id == id); const c = window.equipos.find(e => e.id == j.clubId); document.getElementById('id-card-render').innerHTML = `<div class="id-card"><div class="id-card-header"><img src="${getLogoCorrecto(c)}" class="w-8 h-8 bg-white rounded-full p-1"><span class="oswald text-xs ml-2">Liga de las Nenas</span></div><div class="id-card-body"><div class="id-photo"><img src="${j.foto || ''}"></div><div class="id-details"><div class="id-label">Nombre</div><div class="id-value">${j.nombre}</div><div class="id-label">Club</div><div class="id-value text-pink-600">${c?.nombre}</div><div class="id-label">Cat/DNI</div><div class="id-value text-[10px]">${j.cat} / ${j.dni}</div></div></div><div class="id-footer">Oficial 2026</div></div>`; document.getElementById('modal-container').style.display = 'flex'; }
         
         function cambiarSeccionPlantel(s) { 
             document.getElementById('tab-plantel-jugadoras').classList.toggle('active', s=='jugadoras'); 
@@ -883,8 +946,8 @@
             document.getElementById('modal-match-fecha').innerText = `Fecha ${p.jornada}`;
             document.getElementById('modal-match-nombre-l').innerText = l?.nombre;
             document.getElementById('modal-match-nombre-v').innerText = v?.nombre;
-            document.getElementById('modal-match-logo-l').innerHTML = `<img src="${l?.logo || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg'}" class="w-full h-full object-contain">`;
-            document.getElementById('modal-match-logo-v').innerHTML = `<img src="${v?.logo || 'https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg'}" class="w-full h-full object-contain">`;
+            document.getElementById('modal-match-logo-l').innerHTML = `<img src="${getLogoCorrecto(l)}" class="w-full h-full object-contain">`;
+            document.getElementById('modal-match-logo-v').innerHTML = `<img src="${getLogoCorrecto(v)}" class="w-full h-full object-contain">`;
             let html = "";
             window.categorias.forEach(cat => {
                 const s = cat.replace('/','-');
