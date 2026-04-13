@@ -487,6 +487,8 @@
         window.LOGO_MARPLATENSE = "https://i.ibb.co/ksz8XYtS/marpla.jpg";
         window.LOGO_LA_JAULA = "https://i.ibb.co/B5jSbWmH/lajaula.jpg";
         window.LOGO_ROCA = "https://i.ibb.co/bgY1qtNJ/roca.jpg";
+        window.LOGO_ESTRELLA_DEL_SUR = "https://i.ibb.co/YFK0GyQM/estrelladelsur.jpg";
+        window.LOGO_JUVENTUD_GIARDINO = "https://i.ibb.co/TMcx8V94/juvunida.jpg";
         window.LOGO_DEFAULT = "https://i.ibb.co/HLKVkpgq/logo-jpeg.jpg";
 
         window.equipos = []; window.partidos = []; window.jugadoras = [];
@@ -589,6 +591,8 @@
                 else if(nombreUpper.includes("MARPLATENSE")) logoFinal = window.LOGO_MARPLATENSE;
                 else if(nombreUpper.includes("LA JAULA")) logoFinal = window.LOGO_LA_JAULA;
                 else if(nombreUpper.includes("ROCA")) logoFinal = window.LOGO_ROCA;
+                else if(nombreUpper.includes("ESTRELLA DEL SUR")) logoFinal = window.LOGO_ESTRELLA_DEL_SUR;
+                else if(nombreUpper.includes("GIARDINO") || nombreUpper.includes("JUVENTUD")) logoFinal = window.LOGO_JUVENTUD_GIARDINO;
                 else logoFinal = window.LOGO_DEFAULT;
             }
 
@@ -739,7 +743,9 @@
                 window.LOGO_BIBLIOTECA,
                 window.LOGO_MARPLATENSE,
                 window.LOGO_LA_JAULA,
-                window.LOGO_ROCA
+                window.LOGO_ROCA,
+                window.LOGO_ESTRELLA_DEL_SUR,
+                window.LOGO_JUVENTUD_GIARDINO
             ];
             if(e.logo && e.logo !== window.LOGO_DEFAULT && !logosOficiales.includes(e.logo)) return e.logo;
             
@@ -762,6 +768,8 @@
             if(nombreUpper.includes("MARPLATENSE")) return window.LOGO_MARPLATENSE;
             if(nombreUpper.includes("LA JAULA")) return window.LOGO_LA_JAULA;
             if(nombreUpper.includes("ROCA")) return window.LOGO_ROCA;
+            if(nombreUpper.includes("ESTRELLA DEL SUR")) return window.LOGO_ESTRELLA_DEL_SUR;
+            if(nombreUpper.includes("GIARDINO") || nombreUpper.includes("JUVENTUD")) return window.LOGO_JUVENTUD_GIARDINO;
             
             return e.logo || window.LOGO_DEFAULT;
         }
